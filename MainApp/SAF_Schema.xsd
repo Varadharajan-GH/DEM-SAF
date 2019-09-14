@@ -1,0 +1,847 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- edited with XMLSpy v2013 rel. 2 (http://www.altova.com) by THOMSON REUTERS (SCIENTIFIC) INC. (THOMSON REUTERS (SCIENTIFIC) INC.) -->
+<!-- IDPO_A_Vendor.xsd version 20161020; By Ming Lu  -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+	<xsd:simpleType name="ABSTRACT">
+		<xsd:annotation>
+			<xsd:documentation>defined abstraction content</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="NILLABLE_ASCII_CHARS_32_126">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="3650"/>
+			<xsd:whiteSpace value="collapse"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IDENTFIER_NUM">
+		<xsd:annotation>
+			<xsd:documentation>defined article or citation identifier number</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="NOT_ZERO_ASCII_CHARS_32_126">
+			<xsd:whiteSpace value="preserve"/>
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="210"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="IDENTIFIER_TYPE">
+		<xsd:annotation>
+			<xsd:documentation>defined article or citation identifier type</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ARTN"/>
+			<xsd:enumeration value="DOI"/>
+			<xsd:enumeration value="PII"/>
+			<xsd:enumeration value="PMID"/>
+			<xsd:enumeration value="SICI"/>
+			<xsd:enumeration value="UNSP"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="INDICATOR">
+		<xsd:annotation>
+			<xsd:documentation>defined indicator </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:length value="1"/>
+			<xsd:enumeration value="Y"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="LANGUAGE">
+		<xsd:annotation>
+			<xsd:documentation>defined language</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Afrikaans"/>
+			<xsd:enumeration value="Albanian"/>
+			<xsd:enumeration value="Amharic"/>
+			<xsd:enumeration value="Arabic"/>
+			<xsd:enumeration value="Armenian"/>
+			<xsd:enumeration value="Assamese"/>
+			<xsd:enumeration value="Azerbaijani"/>
+			<xsd:enumeration value="Basque"/>
+			<xsd:enumeration value="Belorussian"/>
+			<xsd:enumeration value="Balinese"/>
+			<xsd:enumeration value="Bengali"/>
+			<xsd:enumeration value="Bulgarian"/>
+			<xsd:enumeration value="Burmese"/>
+			<xsd:enumeration value="Byelorussian"/>
+			<xsd:enumeration value="Cambodian"/>
+			<xsd:enumeration value="Cree"/>
+			<xsd:enumeration value="Chinese"/>
+			<xsd:enumeration value="Croatian"/>
+			<xsd:enumeration value="Catalan"/>
+			<xsd:enumeration value="Czech"/>
+			<xsd:enumeration value="Danish"/>
+			<xsd:enumeration value="Dutch"/>
+			<xsd:enumeration value="English"/>
+			<xsd:enumeration value="Esperanto"/>
+			<xsd:enumeration value="Eskimo"/>
+			<xsd:enumeration value="Estonian"/>
+			<xsd:enumeration value="Faeroese"/>
+			<xsd:enumeration value="Farsi"/>
+			<xsd:enumeration value="Fijian"/>
+			<xsd:enumeration value="Finnish"/>
+			<xsd:enumeration value="Flemish"/>
+			<xsd:enumeration value="French"/>
+			<xsd:enumeration value="Frisian"/>
+			<xsd:enumeration value="Gaelic"/>
+			<xsd:enumeration value="Galician"/>
+			<xsd:enumeration value="German"/>
+			<xsd:enumeration value="Greek"/>
+			<xsd:enumeration value="Georgian"/>
+			<xsd:enumeration value="Gujarati"/>
+			<xsd:enumeration value="Hawaiian"/>
+			<xsd:enumeration value="Hebrew"/>
+			<xsd:enumeration value="Hindi"/>
+			<xsd:enumeration value="Hungarian"/>
+			<xsd:enumeration value="Icelandic"/>
+			<xsd:enumeration value="Indonesian"/>
+			<xsd:enumeration value="Interlingua"/>
+			<xsd:enumeration value="Irish"/>
+			<xsd:enumeration value="Italian"/>
+			<xsd:enumeration value="Japanese"/>
+			<xsd:enumeration value="Javanese"/>
+			<xsd:enumeration value="Kannada"/>
+			<xsd:enumeration value="Kazakh"/>
+			<xsd:enumeration value="Kirghiz"/>
+			<xsd:enumeration value="Kinyarwanda"/>
+			<xsd:enumeration value="Korean"/>
+			<xsd:enumeration value="Kashmiri"/>
+			<xsd:enumeration value="Latin"/>
+			<xsd:enumeration value="Latvian"/>
+			<xsd:enumeration value="Letzeburgesh"/>
+			<xsd:enumeration value="Lithuanian"/>
+			<xsd:enumeration value="Laotian"/>
+			<xsd:enumeration value="Lappish"/>
+			<xsd:enumeration value="Macedonian"/>
+			<xsd:enumeration value="Malay"/>
+			<xsd:enumeration value="Mongolian"/>
+			<xsd:enumeration value="Malayalam"/>
+			<xsd:enumeration value="Marathi"/>
+			<xsd:enumeration value="Moldavian"/>
+			<xsd:enumeration value="Malayo-Polynesian"/>
+			<xsd:enumeration value="Maori"/>
+			<xsd:enumeration value="Malagasy"/>
+			<xsd:enumeration value="Multi-Language"/>
+			<xsd:enumeration value="Norwegian"/>
+			<xsd:enumeration value="Nepali"/>
+			<xsd:enumeration value="Ojibwa"/>
+			<xsd:enumeration value="Panjabi"/>
+			<xsd:enumeration value="Persian"/>
+			<xsd:enumeration value="Pidgin English"/>
+			<xsd:enumeration value="Polish"/>
+			<xsd:enumeration value="Papiamento"/>
+			<xsd:enumeration value="Provencal"/>
+			<xsd:enumeration value="Portuguese"/>
+			<xsd:enumeration value="Pushto"/>
+			<xsd:enumeration value="Quechua"/>
+			<xsd:enumeration value="Romansch"/>
+			<xsd:enumeration value="Rumanian"/>
+			<xsd:enumeration value="Russian"/>
+			<xsd:enumeration value="Sanskrit"/>
+			<xsd:enumeration value="Serbian"/>
+			<xsd:enumeration value="Sinhalese"/>
+			<xsd:enumeration value="Sindhi"/>
+			<xsd:enumeration value="Slovak"/>
+			<xsd:enumeration value="Slovene"/>
+			<xsd:enumeration value="Slovenian"/>
+			<xsd:enumeration value="Samoan"/>
+			<xsd:enumeration value="Spanish"/>
+			<xsd:enumeration value="Serbo-Croatian"/>
+			<xsd:enumeration value="Swedish"/>
+			<xsd:enumeration value="Swahili"/>
+			<xsd:enumeration value="Swazi"/>
+			<xsd:enumeration value="Tadzhik"/>
+			<xsd:enumeration value="Tagalog"/>
+			<xsd:enumeration value="Thai"/>
+			<xsd:enumeration value="Tibetan"/>
+			<xsd:enumeration value="Turkish"/>
+			<xsd:enumeration value="Tamil"/>
+			<xsd:enumeration value="Turkmen"/>
+			<xsd:enumeration value="Ukrainian"/>
+			<xsd:enumeration value="Urdu"/>
+			<xsd:enumeration value="Uzbek"/>
+			<xsd:enumeration value="Valencian"/>
+			<xsd:enumeration value="Vietnamese"/>
+			<xsd:enumeration value="Welsh"/>
+			<xsd:enumeration value="Yiddish"/>
+			<xsd:enumeration value="Zulu"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NILLABLE_ASCII_CHARS_32_126">
+		<xsd:annotation>
+			<xsd:documentation>ASCII allowing leading space from 32 to 126</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[&#32;-&#126;]+"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Use when cardinality is 1 or more -->
+	<xsd:simpleType name="EXTENDED_CHARS">
+		<xsd:annotation>
+			<xsd:documentation>ASCII not allowing leading space from 32 TO 126, 196-199,201,209,214,220,224-226,228-239,241-244,246,249-252,255</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[&#33;-&#126;&#196;-&#199;&#201;&#209;&#214;&#220;&#224;-&#226;&#228;-&#239;&#241;-&#244;&#246;&#249;-&#252;&#255;]{1}[&#32;-&#126;&#196;-&#199;&#201;&#209;&#214;&#220;&#224;-&#226;&#228;-&#239;&#241;-&#244;&#246;&#249;-&#252;&#255;]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Use when cardinality is 1 or more -->
+	<xsd:simpleType name="ASCII_CHARS_32_126">
+		<xsd:annotation>
+			<xsd:documentation>ASCII not allowing leading space from 32 to 126</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[&#33;-&#126;]{1}[&#32;-&#126;]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NO_LEAD_SPACE_ASCII_CHARS_32_126">
+		<xsd:annotation>
+			<xsd:documentation>ASCII not allowing leading space from 32 to 126</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[&#33;-&#126;]{1}[&#32;-&#126;]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="NOT_ZERO_ASCII_CHARS_32_126">
+		<xsd:annotation>
+			<xsd:documentation>ASCII from 32 to 126 but not allowing leading space and zero sequence</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[&#33;-&#47;&#49;-&#126;]{1}[&#32;-&#126;]*|[&#33;-&#126;]{1}[&#32;-&#126;]*[&#33;-&#47;&#49;-&#126;]{1}[&#32;-&#126;]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ASCII_AND_WHITE_SPACES">
+		<xsd:annotation>
+			<xsd:documentation>ASCII with preserved whitespaces</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="NO_LEAD_SPACE_ASCII_CHARS_32_126">
+			<xsd:minLength value="1"/>
+			<xsd:whiteSpace value="preserve"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:element name="DT_DOCUMENTTYPE" nillable="false">
+		<xsd:annotation>
+			<xsd:documentation>item level  Required </xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:enumeration value="Abstract of Published Item"/>
+				<xsd:enumeration value="Art Exhibit Review"/>
+				<xsd:enumeration value="Article"/>
+				<xsd:enumeration value="Bibliography"/>
+				<xsd:enumeration value="Biographical"/>
+				<xsd:enumeration value="Book Review"/>
+				<xsd:enumeration value="CC Meeting Abstract"/>
+				<xsd:enumeration value="CC Meeting Heading"/>
+				<xsd:enumeration value="Chronology"/>
+				<xsd:enumeration value="Correction"/>
+				<xsd:enumeration value="Dance Performance Review"/>
+				<xsd:enumeration value="Database Review"/>
+				<xsd:enumeration value="Discussion"/>
+				<xsd:enumeration value="Editorial"/>
+				<xsd:enumeration value="Excerpt"/>
+				<xsd:enumeration value="Fiction, Creative Prose"/>
+				<xsd:enumeration value="Film Review"/>
+				<xsd:enumeration value="Hardware Review"/>
+				<xsd:enumeration value="Letter"/>
+				<xsd:enumeration value="Main Cite"/>
+				<xsd:enumeration value="Meeting Abstract"/>
+				<xsd:enumeration value="Meeting Summary"/>
+				<xsd:enumeration value="Music Performance Review"/>
+				<xsd:enumeration value="Music Score"/>
+				<xsd:enumeration value="Music Score Review"/>
+				<xsd:enumeration value="News Item"/>
+				<xsd:enumeration value="Note"/>
+				<xsd:enumeration value="Patent"/>
+				<xsd:enumeration value="Poetry"/>
+				<xsd:enumeration value="Press Digest"/>
+				<xsd:enumeration value="Proceedings Paper"/>
+				<xsd:enumeration value="Record Review"/>
+				<xsd:enumeration value="Reprint"/>
+				<xsd:enumeration value="Review"/>
+				<xsd:enumeration value="Script"/>
+				<xsd:enumeration value="Software Review"/>
+				<xsd:enumeration value="TV Review, Radio Review"/>
+				<xsd:enumeration value="Theater Review"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="PG_PAGESPAN" nillable="false">
+		<xsd:annotation>
+			<xsd:documentation>item level  Required </xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="3750"/>
+				<xsd:whiteSpace value="preserve"/>
+				<xsd:pattern value="[\w\-\+,_]+"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="ABSTRACT">
+		<xsd:annotation>
+			<xsd:documentation>under item  Optional 0 to many (need to be CDATA)</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base="ABSTRACT">
+					<xsd:attribute name="seq" type="xsd:positiveInteger" use="required"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="AI_ARTICLEIDENTIFIER" block="extension" nillable="false">
+		<xsd:annotation>
+			<xsd:documentation>under item Optional 0 to many  (need to be CDATA)</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base="IDENTFIER_NUM">
+					<xsd:attribute name="seq" type="xsd:positiveInteger" use="required"/>
+					<xsd:attribute name="type" type="IDENTIFIER_TYPE" use="required"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="CI_AUTHOR">
+		<xsd:annotation>
+			<xsd:documentation>citation level  Optional</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="NILLABLE_ASCII_CHARS_32_126">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="18"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="CI_CITATION">
+		<xsd:annotation>
+			<xsd:documentation>item level  Optional 0 to many</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="CI_INFO"/>
+				<xsd:element ref="FULL_CI_INFO" minOccurs="0"/>
+			</xsd:sequence>
+			<xsd:attribute name="seq" type="xsd:positiveInteger" use="required"/>
+			<xsd:attribute name="type" use="optional">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:enumeration value="retracted"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+		</xsd:complexType>
+		<xsd:unique name="citation_identifier">
+			<xsd:selector xpath="RI_CITATIONIDENTIFIER"/>
+			<xsd:field xpath="@seq"/>
+		</xsd:unique>
+	</xsd:element>
+	<xsd:element name="CI_INFO">
+		<xsd:annotation>
+			<xsd:documentation>citation level  Optional</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:choice>
+				<xsd:element ref="CI_JOURNAL"/>
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="CI_IMPLICITINDICATOR">
+		<xsd:annotation>
+			<xsd:documentation>citation level  Optional</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:length value="1"/>
+				<xsd:enumeration value="I"/>
+				<xsd:enumeration value="M"/>
+				<xsd:enumeration value="C"/>
+				<xsd:enumeration value=" "/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="CI_JOURNAL">
+		<xsd:annotation>
+			<xsd:documentation>citation level  Optional</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="CI_AUTHOR" minOccurs="0"/>
+				<xsd:element ref="CI_VOLUME" minOccurs="0"/>
+				<xsd:element ref="CI_PAGE" minOccurs="0"/>
+				<xsd:element ref="CI_YEAR" minOccurs="0"/>
+				<xsd:element ref="CI_TITLE" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>citation level  Optional  (need to be CDATA)</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="CI_IMPLICITINDICATOR" minOccurs="0"/>
+			</xsd:sequence>
+			<xsd:attribute name="KEYSAVE_EXPENDED" type="INDICATOR" use="optional"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="CI_PAGE">
+		<xsd:annotation>
+			<xsd:documentation>citation level  Optional</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="NILLABLE_ASCII_CHARS_32_126">
+				<xsd:length value="5"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="CI_TITLE">
+		<xsd:annotation>
+			<xsd:documentation>citation level  Optional  (need to be CDATA) For vendors - this must be left blank except for processing of NTR citation.  For NTR citations, the CI_TITLE is populated with the token value "**NON-TRADITIONAL**"</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="NILLABLE_ASCII_CHARS_32_126">
+				<xsd:minLength value="0"/>
+				<xsd:maxLength value="20"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="CI_VOLUME">
+		<xsd:annotation>
+			<xsd:documentation>citation level  Optional</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="NILLABLE_ASCII_CHARS_32_126">
+				<xsd:length value="4"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="CI_YEAR">
+		<xsd:annotation>
+			<xsd:documentation>citation level  Optional</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:length value="4"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="ET_ENHANCEDTITLE">
+		<xsd:annotation>
+			<xsd:documentation>title level Optional (need to be CDATA)</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="NILLABLE_ASCII_CHARS_32_126">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="1500"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="ID_ACCESSION">
+		<xsd:annotation>
+			<xsd:documentation>issue level  Required </xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:length value="5"/>
+				<xsd:pattern value="[A-Z0-9]{5}"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="ISSUE">
+		<xsd:annotation>
+			<xsd:documentation>issue</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ID_ACCESSION"/>
+				<xsd:element ref="JS_JOURNALSEQ"/>
+				<xsd:element ref="YR_PUBLYEAR"/>
+				<xsd:element ref="ITEM" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="ISSUENO" type="xsd:positiveInteger" use="optional"/>
+		</xsd:complexType>
+		<xsd:unique name="item">
+			<xsd:selector xpath="ITEM"/>
+			<xsd:field xpath="@ITEMNO"/>
+		</xsd:unique>
+	</xsd:element>
+	<xsd:element name="ISSUES">
+		<xsd:annotation>
+			<xsd:documentation>root</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ISSUE" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+		<xsd:unique name="issueno">
+			<xsd:selector xpath="ISSUE"/>
+			<xsd:field xpath="@ISSUENO"/>
+		</xsd:unique>
+	</xsd:element>
+	<xsd:element name="ITEM_CONTENT">
+		<xsd:annotation>
+			<xsd:documentation>child of item</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="DT_DOCUMENTTYPE"/>
+				<xsd:element ref="PG_PAGESPAN"/>
+				<xsd:element ref="MA_MEETINGABSTRACT" minOccurs="0"/>
+				<xsd:element ref="LA_LANGUAGE" maxOccurs="unbounded"/>
+				<xsd:element ref="KEYWORD" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="TITLES"/>
+				<xsd:element ref="AI_ARTICLEIDENTIFIER" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="CI_CITATION" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="ABSTRACT" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="BIOSIS_DATA" minOccurs="0"/>
+				<xsd:element ref="FUNDING_ACKNOWLEDGEMENT" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ITEM">
+		<xsd:annotation>
+			<xsd:documentation>issue level Requied 1 to many </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ITEM_CONTENT"/>
+			</xsd:sequence>
+			<xsd:attribute name="ITEMNO" use="required">
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:positiveInteger">
+						<xsd:minInclusive value="1"/>
+						<xsd:maxInclusive value="9999"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:attribute>
+		</xsd:complexType>
+		<xsd:unique name="article_identifier">
+			<xsd:selector xpath="ITEM_CONTENT/AI_ARTICLEIDENTIFIER"/>
+			<xsd:field xpath="@seq"/>
+		</xsd:unique>
+		<xsd:unique name="group_author">
+			<xsd:selector xpath="ITEM_CONTENT/GA_GROUPAUTHOR"/>
+			<xsd:field xpath="@seq"/>
+		</xsd:unique>
+		<xsd:unique name="address">
+			<xsd:selector xpath="ITEM_CONTENT/CD_ADDRESS"/>
+			<xsd:field xpath="@seq"/>
+		</xsd:unique>
+		<xsd:unique name="language">
+			<xsd:selector xpath="ITEM_CONTENT/LA_LANGUAGE"/>
+			<xsd:field xpath="@seq"/>
+		</xsd:unique>
+		<xsd:unique name="keyword">
+			<xsd:selector xpath="ITEM_CONTENT/KEYWORD"/>
+			<xsd:field xpath="@seq"/>
+		</xsd:unique>
+		<xsd:unique name="citation">
+			<xsd:selector xpath="ITEM_CONTENT/CI_CITATION"/>
+			<xsd:field xpath="@seq"/>
+		</xsd:unique>
+		<xsd:unique name="abstract">
+			<xsd:selector xpath="ITEM_CONTENT/ABSTRACT"/>
+			<xsd:field xpath="@seq"/>
+		</xsd:unique>
+		<xsd:unique name="artilepagelist">
+			<xsd:selector xpath="ITEM_CONTENT/IP_PAGE"/>
+			<xsd:field xpath="."/>
+		</xsd:unique>
+	</xsd:element>
+	<xsd:element name="JS_JOURNALSEQ">
+		<xsd:annotation>
+			<xsd:documentation>issue level  Required </xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:string">
+				<xsd:length value="6"/>
+				<xsd:pattern value="[A-Z0-9]{5}[ABJS]"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="YR_PUBLYEAR" nillable="false">
+		<xsd:annotation>
+			<xsd:documentation>issue level  Required </xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="xsd:gYear">
+				<xsd:minInclusive value="1890"/>
+				<xsd:maxInclusive value="9999"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="KEYWORD">
+		<xsd:annotation>
+			<xsd:documentation>item level  Optional 0 to many</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="AUTHOR_KEYWORD"/>
+			</xsd:sequence>
+			<xsd:attribute name="seq" type="xsd:positiveInteger" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="LA_LANGUAGE">
+		<xsd:annotation>
+			<xsd:documentation>item level  Required 1 to many</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base="LANGUAGE">
+					<xsd:attribute name="seq" type="xsd:positiveInteger" use="required"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="TI_TITLE">
+		<xsd:annotation>
+			<xsd:documentation>title level  Required (need to be CDATA)</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="NILLABLE_ASCII_CHARS_32_126">
+				<xsd:minLength value="2"/>
+				<xsd:maxLength value="1500"/>
+				<xsd:pattern value="[^^]*"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="TITLES">
+		<xsd:annotation>
+			<xsd:documentation>item level  Required </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="TI_TITLE"/>
+				<xsd:element ref="ET_ENHANCEDTITLE" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- Start FUNDING_ACKNOWLEDGEMENT elements .... -->
+	<xsd:simpleType name="FUNDING_TEXT_BASE">
+		<xsd:restriction base="EXTENDED_CHARS">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="3650"/>
+			<xsd:whiteSpace value="preserve"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FUNDING_GRANT_NO_BASE">
+		<xsd:restriction base="NO_LEAD_SPACE_ASCII_CHARS_32_126">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="256"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="FUNDING_ORG_NAME_BASE">
+		<xsd:restriction base="EXTENDED_CHARS">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="256"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:element name="FUNDING_TEXT">
+		<xsd:annotation>
+			<xsd:documentation>(need to be CDATA)</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base="FUNDING_TEXT_BASE">
+					<xsd:attribute name="seq" type="xsd:positiveInteger" use="required"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="FUNDING_GRANT_NO" nillable="false">
+		<xsd:annotation>
+			<xsd:documentation>(need to be CDATA)</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base="FUNDING_GRANT_NO_BASE">
+					<xsd:attribute name="seq" type="xsd:positiveInteger" use="required"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="FUNDING_ORG_NAME" nillable="false">
+		<xsd:annotation>
+			<xsd:documentation>(need to be CDATA)</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base="FUNDING_ORG_NAME_BASE"/>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="FUNDING_ORG_GRANT" nillable="true">
+		<xsd:complexType>
+			<xsd:attribute name="grant_no_seq" type="xsd:positiveInteger" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="FUNDING_ACKNOWLEDGEMENT">
+		<xsd:annotation>
+			<xsd:documentation>under item  Optional</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="FUNDING_TEXT" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>Text Para - 1 to many (need to be CDATA)</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element ref="FUNDING_GRANT_NO" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>Grant No - 0 to many (need to be CDATA)</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="FUNDING_ORG_GROUP" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>Org and related Grants - 0 to many</xsd:documentation>
+					</xsd:annotation>
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="FUNDING_ORG_NAME">
+								<xsd:annotation>
+									<xsd:documentation>Required (need to be CDATA)</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+							<xsd:element ref="FUNDING_ORG_GRANT" minOccurs="0" maxOccurs="unbounded">
+								<xsd:annotation>
+									<xsd:documentation>Ref to Seq of Grant No (attribute only - empty element)</xsd:documentation>
+								</xsd:annotation>
+							</xsd:element>
+						</xsd:sequence>
+						<xsd:attribute name="seq" type="xsd:positiveInteger" use="required"/>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+		<!-- Unique contraint for seq attribute within multiple sets of FUNDING_TEXT elements .... -->
+		<xsd:unique name="funding_text_seq_unique">
+			<xsd:selector xpath=".//FUNDING_TEXT"/>
+			<xsd:field xpath="@seq"/>
+		</xsd:unique>
+		<!-- Unique contraint for content within multiple sets of FUNDING_GRANT_NO elements .... -->
+		<xsd:unique name="funding_grant_no_unique">
+			<xsd:selector xpath=".//FUNDING_GRANT_NO"/>
+			<xsd:field xpath="."/>
+		</xsd:unique>
+		<!-- Unique contraint for seq attribute within multiple sets of FUNDING_GRANT_NO elements .... -->
+		<xsd:unique name="funding_grant_no_seq_unique">
+			<xsd:selector xpath=".//FUNDING_GRANT_NO"/>
+			<xsd:field xpath="@seq"/>
+		</xsd:unique>
+		<!-- Unique contraint for seq attribute within multiple sets of FUNDING_ORG_GROUP elements .... -->
+		<xsd:unique name="funding_org_group_seq_unique">
+			<xsd:selector xpath=".//FUNDING_ORG_GROUP"/>
+			<xsd:field xpath="@seq"/>
+		</xsd:unique>
+		<!-- key and keref contraint for seq attribute within multiple sets of FUNDING_ORG_GRANT elements .... -->
+		<xsd:key name="funding_grant_no_seq_key">
+			<xsd:selector xpath=".//FUNDING_GRANT_NO"/>
+			<xsd:field xpath="@seq"/>
+		</xsd:key>
+		<xsd:keyref name="funding_org_grant_no_seq_ref" refer="funding_grant_no_seq_key">
+			<xsd:selector xpath=".//FUNDING_ORG_GROUP/FUNDING_ORG_GRANT"/>
+			<xsd:field xpath="@grant_no_seq"/>
+		</xsd:keyref>
+	</xsd:element>
+	<xsd:element name="FULL_CI_INFO">
+		<xsd:complexType>
+			<xsd:sequence minOccurs="0"/>
+			<xsd:attribute name="type" type="FULL_CI_INFO_TYPE" use="required"/>
+			<xsd:attribute name="TR_Implicit_IND" type="xsd:boolean" use="optional" default="0"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="FULL_CI_INFO_TYPE">
+		<xsd:annotation>
+			<xsd:documentation>defined to satisfy type attribute for element FULL_CI_INFO</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Journal"/>
+			<xsd:enumeration value="Book-Series"/>
+			<xsd:enumeration value="General"/>
+			<xsd:enumeration value="UnPublished"/>
+			<xsd:enumeration value="Thesis"/>
+			<xsd:enumeration value="Report"/>
+			<xsd:enumeration value="Patent"/>
+			<xsd:enumeration value="Meeting"/>
+			<xsd:enumeration value="Magazine-Newspaper"/>
+			<xsd:enumeration value="InPress"/>
+			<xsd:enumeration value="Communication"/>
+			<xsd:enumeration value="Non-Traditional Reference"/>
+			<xsd:enumeration value="FCR-EXEMPT"/>
+			<xsd:enumeration value="Social Media"/>
+			<xsd:enumeration value="Data Repository"/>
+			<xsd:enumeration value="DCI"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:element name="BIOSIS_DATA">
+		<xsd:annotation>
+			<xsd:documentation>under item</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="BIOSIS_FOREIGN_TITLE" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="BIOSIS_URL" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+		<xsd:unique name="biosis_author">
+			<xsd:selector xpath="BIOSIS_AUTHOR"/>
+			<xsd:field xpath="@seq"/>
+		</xsd:unique>
+		<xsd:unique name="biosis_title">
+			<xsd:selector xpath="BIOSIS_FOREIGN_TITLE"/>
+			<xsd:field xpath="@seq"/>
+		</xsd:unique>
+	</xsd:element>
+	<xsd:element name="BIOSIS_FOREIGN_TITLE">
+		<xsd:annotation>
+			<xsd:documentation>under biosis data(need to be CDATA)</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base="BIOSIS_TITLE">
+					<xsd:attribute name="seq" type="xsd:positiveInteger" use="required"/>
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:simpleType name="BIOSIS_TITLE">
+		<xsd:annotation>
+			<xsd:documentation>defined biosis title</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="NILLABLE_ASCII_CHARS_32_126">
+			<xsd:minLength value="2"/>
+			<xsd:maxLength value="1500"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:element name="BIOSIS_URL">
+		<xsd:annotation>
+			<xsd:documentation>under biosis data(need to be CDATA)</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="NILLABLE_ASCII_CHARS_32_126">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="250"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<xsd:element name="MA_MEETINGABSTRACT">
+		<xsd:annotation>
+			<xsd:documentation>item level  Optional</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="NILLABLE_ASCII_CHARS_32_126">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="10"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+	<!-- End FUNDING_ACKNOWLEDGEMENT elements .... -->
+	<xsd:element name="AUTHOR_KEYWORD">
+		<xsd:annotation>
+			<xsd:documentation>under keyword (need to be CDATA)</xsd:documentation>
+		</xsd:annotation>
+		<xsd:simpleType>
+			<xsd:restriction base="NILLABLE_ASCII_CHARS_32_126">
+				<xsd:minLength value="1"/>
+				<xsd:maxLength value="1500"/>
+			</xsd:restriction>
+		</xsd:simpleType>
+	</xsd:element>
+</xsd:schema>
