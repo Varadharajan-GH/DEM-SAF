@@ -50,9 +50,12 @@ namespace MainApp
             AdjustWindow();
             AddLog("Adjusting window finished");
 
+            AddLog("Setting TextBox focus events");
             SetTextBoxEnterEvents(this);
 
-            SetIDType();            //Set IDENTIFIER_TYPE in combo boxes
+            //Set IDENTIFIER_TYPE in combo boxes
+            AddLog("Setting ID types in comboboxes");
+            SetIDType();            
 
             LoadImage("BL7CX160A",720);
 
@@ -145,9 +148,9 @@ namespace MainApp
 
                 using (Hunspell hunspell = new Hunspell(paths.Files.En_aff_file , paths.Files.En_dic_file))
                 {
-                    if (File.Exists(paths.Files.CustomWordPath))
+                    if (File.Exists(paths.Files.CustomWordsPath))
                     {
-                        string[] lines = ReadAllLines(paths.Files.CustomWordPath);
+                        string[] lines = ReadAllLines(paths.Files.CustomWordsPath);
                         foreach (string line in lines)
                         {
                             hunspell.Add(line);
@@ -200,9 +203,9 @@ namespace MainApp
         {
             using (Hunspell hunspell = new Hunspell(paths.Files.En_aff_file, paths.Files.En_dic_file))
             {
-                if (File.Exists(paths.Files.CustomWordPath))
+                if (File.Exists(paths.Files.CustomWordsPath))
                 {
-                    string[] lines = ReadAllLines(paths.Files.CustomWordPath);
+                    string[] lines = ReadAllLines(paths.Files.CustomWordsPath);
                     foreach (string line in lines)
                     {
                         hunspell.Add(line);
@@ -211,7 +214,7 @@ namespace MainApp
                 bool isCorrect = hunspell.Spell(wordToCheck);
                 if (!isCorrect)
                 {
-                    using (StreamWriter streamWriter = new StreamWriter(paths.Files.CustomWordPath, true))
+                    using (StreamWriter streamWriter = new StreamWriter(paths.Files.CustomWordsPath, true))
                     {
                         streamWriter.WriteLine(wordToCheck);
                     }
@@ -335,9 +338,9 @@ namespace MainApp
             {
                 using (Hunspell hunspell = new Hunspell(paths.Files.En_aff_file, paths.Files.En_dic_file))
                 {
-                    if (File.Exists(paths.Files.CustomWordPath))
+                    if (File.Exists(paths.Files.CustomWordsPath))
                     {
-                        string[] lines = ReadAllLines(paths.Files.CustomWordPath);
+                        string[] lines = ReadAllLines(paths.Files.CustomWordsPath);
                         foreach (string line in lines)
                         {
                             hunspell.Add(line);
@@ -553,7 +556,7 @@ namespace MainApp
 
         private void LoadImage(string itemName,int seq)
         {
-            currentImage = $"{paths.Folders.InputDir}\\{itemName}\\{itemName}_{seq}.TIF";
+            currentImage = $"{paths.Folders.Input_Dir}\\{itemName}\\{itemName}_{seq}.TIF";
             pbeImage.ImageLocation = currentImage;
         }
 
@@ -630,7 +633,7 @@ namespace MainApp
 
             serializeIssue = new SerializeDeserialize<ISSUE>();
 
-            string currentXML = $"{paths.Folders.InputDir}\\{ItemName}\\{ItemName}.XML";
+            string currentXML = $"{paths.Folders.Input_Dir}\\{ItemName}\\{ItemName}.XML";
 
             XmlDocument xmldocument = new XmlDocument();
 
@@ -648,11 +651,11 @@ namespace MainApp
 
             string serializedIssues = serializeIssue.SerializeData(deserializedIssues);
 
-            Directory.CreateDirectory($"{paths.Folders.OutputDir}\\{ItemName}\\");
+            Directory.CreateDirectory($"{paths.Folders.Output_Dir}\\{ItemName}\\");
 
             xmldocument.LoadXml(serializedIssues);
 
-            using (TextWriter streamWriter = new StreamWriter($"{paths.Folders.OutputDir}\\{ItemName}\\{ItemName}.XML", false, Encoding.UTF8))
+            using (TextWriter streamWriter = new StreamWriter($"{paths.Folders.Output_Dir}\\{ItemName}\\{ItemName}.XML", false, Encoding.UTF8))
             {
                 //streamWriter.Write(serializedIssues);             //For UTF-16 encoding
                 xmldocument.Save(streamWriter);                     //For UTF-8 encoding

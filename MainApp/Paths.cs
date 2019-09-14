@@ -2,38 +2,39 @@
 {
     public class Paths
     {
-        readonly Folders folders = new Folders();
-        readonly Files files = new Files();
-
-        internal Folders Folders => folders;
-        internal Files Files => files;
+        internal Folders Folders { get; } = new Folders();
+        internal Files Files { get; } = new Files();
     }
 
     class Folders
     {
         public  Folders()
         {
-            AdminDir = "D:\\data\\A_Process\\Admin";
-            InputDir = "D:\\data\\A_Process\\Input";
-            PriorityDir = "D:\\data\\A_Process\\Input";
-            OutputDir = "D:\\data\\A_Process\\Output";
+            Root_Dir = "D:\\data\\A_Process";
+            Admin_Dir = $"{Root_Dir}\\Admin";
+            Input_Dir = $"{Root_Dir}\\Input";
+            Priority_Dir = $"{Root_Dir}\\Input";
+            Output_Dir = $"{Root_Dir}\\Output";
+            Dict_en_us_DIR = $"{Admin_Dir}\\Dict\\en_us";
         }
-        public string AdminDir { get; set; }
-        public string InputDir { get; set; }
-        public string PriorityDir { get; set; }
-        public string OutputDir { get; set; }
+        public string Root_Dir { get; }
+        public string Admin_Dir { get;  }
+        public string Input_Dir { get;  }
+        public string Priority_Dir { get; }
+        public string Output_Dir { get;  }
+        public string Dict_en_us_DIR { get; }
     }
     class Files
     {
         public Files()
         {
-            En_aff_file =$"D:\\data\\A_Process\\Admin\\Dict\\en_us\\en_us.aff";
-            En_dic_file = $"D:\\data\\A_Process\\Admin\\Dict\\en_us\\en_us.dic";
-            CustomWordPath = $"D:\\data\\A_Process\\Admin\\Dict\\en_us\\CustomWords-en_us.txt";
+            En_aff_file = $"{new Folders().Dict_en_us_DIR}\\en_us.aff";
+            En_dic_file = $"{new Folders().Dict_en_us_DIR}\\en_us.dic";
+            CustomWordsPath = $"{new Folders().Dict_en_us_DIR}\\CustomWords-en_us.txt";
         }
-        public string En_aff_file { get; set; }
-        public string En_dic_file { get; set; }
-        public string CustomWordPath { get; set; }
+        public string En_aff_file { get; }
+        public string En_dic_file { get; }
+        public string CustomWordsPath { get; }
     }
 
 }
