@@ -42,29 +42,22 @@ namespace MainApp
         {
             sbLog = new StringBuilder();
 
-            AddLog("Initialize started");
             InitializeComponent();
-            AddLog("Initialize finished");
 
-            AddLog("Adjusting window started");
             AdjustWindow();
-            AddLog("Adjusting window finished");
 
-            AddLog("Setting TextBox focus events");
             SetTextBoxEnterEvents(this);
 
-            //Set IDENTIFIER_TYPE in combo boxes
-            AddLog("Setting ID types in comboboxes");
             SetIDType();            
 
-            LoadImage("BL7CX160A",720);
+            //LoadImage("BL7CX160A",720);
 
             ProcessXML("BL7CX160A");
 
             _bw.DoWork += ConvertImageToText;
             _bw.RunWorkerCompleted += BwRunWorkerCompleted;
-        }        
-        
+        }
+
         #region OCR
 
         public void ConvertImageToText(object sender, DoWorkEventArgs doWorkEventArgs)
@@ -79,14 +72,12 @@ namespace MainApp
                 return;
             }
             
-               Bitmap image = (Bitmap)pbeImage.Image; //new Bitmap(@"D:\\SKIT\\SAF\\Input\\GY8QJ025A\\GY8QJ025A_11089.TIF");
-            
-            
+            Bitmap image = (Bitmap)pbeImage.Image; 
+                        
             StringBuilder sbOcrText = new StringBuilder();
             using (Tesseract ocr = new Tesseract())
             {
-                _ = ocr.Init("D:\\Programs\\VS.Net\\C#\\DEM_SAF\\packages\\NuGet.Tessnet2.1.1.1\\content\\Content\\tessdata",
-                         "eng", false);
+                _ = ocr.Init(paths.Folders.Ocrdata_Dir,"eng", false);
                 List<Word> result;
                 if (rect.X < 0)
                 {
@@ -137,13 +128,17 @@ namespace MainApp
 
         private void SpellCheck(RichTextBox rtb)
         {
+            AddLog("Enter");
             if (rtb.InvokeRequired)
             {
+                AddLog("Invoke required");
                 SpellCheckCallback spellCheckCallback = new SpellCheckCallback(SpellCheck);
                 this.Invoke(spellCheckCallback, new object[] { rtb });
+                AddLog("Invoked");
             }
             else
             {
+                AddLog("Started");
                 Font fontRTB = new Font(rtbAbstract.Font.FontFamily, rtbAbstract.Font.Size, FontStyle.Regular);
 
                 using (Hunspell hunspell = new Hunspell(paths.Files.En_aff_file , paths.Files.En_dic_file))
@@ -151,54 +146,62 @@ namespace MainApp
                     if (File.Exists(paths.Files.CustomWordsPath))
                     {
                         string[] lines = ReadAllLines(paths.Files.CustomWordsPath);
+                        AddLog("Adding custom words");
                         foreach (string line in lines)
                         {
                             hunspell.Add(line);
                         }
                     }
-                    
+
+                    AddLog("Checking spelling");
                     foreach (string word in rtb.Text.Split(' '))
                     {
-                        string newWord = Regex.Replace(word, @"[^a-zA-Z]+", "");
-                        bool isCorrect = hunspell.Spell(newWord);
-                        if (!isCorrect)
+                        string newWords = Regex.Replace(word, @"[^a-zA-Z]+", " ");
+                        foreach(string newWord in newWords.Split(' '))
                         {
-                            rtbAbstract.SelectionStart = rtb.Text.IndexOf(word);
-                            rtbAbstract.SelectionLength = word.Length;
-                            rtbAbstract.SelectionFont = new Font(fontRTB.FontFamily, fontRTB.Size + 1, FontStyle.Underline);
-                        }
-                        else
-                        {
-                            rtbAbstract.SelectionStart = rtb.Text.IndexOf(word);
-                            rtbAbstract.SelectionLength = word.Length;
-                            rtbAbstract.SelectionFont = new Font(fontRTB.FontFamily, fontRTB.Size, FontStyle.Regular);
+                            bool isCorrect = hunspell.Spell(newWord);
+                            if (!isCorrect)
+                            {
+                                rtbAbstract.SelectionStart = rtb.Text.IndexOf(word) + word.IndexOf(newWord);
+                                rtbAbstract.SelectionLength = newWord.Length;
+                                rtbAbstract.SelectionFont = new Font(fontRTB.FontFamily, fontRTB.Size + 1, FontStyle.Underline);
+                            }
+                            else
+                            {
+                                rtbAbstract.SelectionStart = rtb.Text.IndexOf(word) + word.IndexOf(newWord);
+                                rtbAbstract.SelectionLength = newWord.Length;
+                                rtbAbstract.SelectionFont = new Font(fontRTB.FontFamily, fontRTB.Size, FontStyle.Regular);
+                            }
                         }
                     }
                 }
                 fontRTB.Dispose();
             }
-
+            AddLog("Exit");
         }
-
         private void SuggestionClicked(object sender, EventArgs e)
         {
+            AddLog("SuggestionClicked: Enter");
             MenuItem miMenuItem = (MenuItem)sender;
             if (miMenuItem.Text == "More...")
             {
+                AddLog("Calling ShowSpellChecker");
                 ShowSpellChecker(wordToCheck);
             }
             else if (miMenuItem.Text == "Add to Dictionary")
             {
+                AddLog("Calling AddWordToDictionary");
                 AddWordToDictionary(wordToCheck);
             }
             else
             {
                 oldText = rtbAbstract.Text;
                 rtbAbstract.Text = rtbAbstract.Text.Replace(wordToCheck, miMenuItem.Text);
+                AddLog("Calling SpellCheck");
                 SpellCheck(rtbAbstract);
             }
+            AddLog("SuggestionClicked: Exit");
         }
-
         private void AddWordToDictionary(string wordToCheck)
         {
             using (Hunspell hunspell = new Hunspell(paths.Files.En_aff_file, paths.Files.En_dic_file))
@@ -222,14 +225,14 @@ namespace MainApp
             }            
             SpellCheck(rtbAbstract);
         }
-
         private void ShowSpellChecker(string word)
         {
+            //ToDo
             MessageBox.Show("Yet to implement");
         }
-
         private string WordUnderMouse(RichTextBox rch, int x, int y)
         {
+            AddLog("Enter");
             // Get the character's position.
             int pos = rch.GetCharIndexFromPosition(new Point(x, y));
             if (pos <= 0) return "";
@@ -257,6 +260,7 @@ namespace MainApp
             end_pos--;
 
             // Return the result.
+            AddLog("Returning");
             if (start_pos > end_pos) return "";
             return txt.Substring(start_pos, end_pos - start_pos + 1);
         }
@@ -276,7 +280,6 @@ namespace MainApp
                 //tsStatus.Text = $"Mousedown ({mouseDown.X} , {mouseDown.Y})";
             }
         }
-
         private void PbeImage_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -302,7 +305,6 @@ namespace MainApp
                 }                
             }
         }
-
         private void PbeImage_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -319,19 +321,16 @@ namespace MainApp
                 e.Graphics.DrawRectangle(pen, rBox.rectBox);
             }
         }
-
         private void LogsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LogForm lg = new LogForm();
             lg.SetLog(sbLog.ToString());
             lg.Show();
         }
-
         private void MiQuit_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
-
         private void RtbAbstract_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -373,12 +372,29 @@ namespace MainApp
                 }
             }
         }
-
         private void TsbSpellCheck_Click(object sender, EventArgs e)
         {
             SpellCheck(rtbAbstract);
         }
-
+        private void TcTagArea_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tcTagArea.SelectedTab.Name == "tpAbstract")
+            {
+                rtbAbstract.Focus();
+            }
+            else if (tcTagArea.SelectedTab.Name == "tpKeywords")
+            {
+                txtKeywords.Focus();
+            }
+            else if (tcTagArea.SelectedTab.Name == "tpTitle")
+            {
+                txtTitleTitle.Focus();
+            }
+            else if (tcTagArea.SelectedTab.Name == "tpReference")
+            {
+                txtRefSurname.Focus();
+            }
+        }
         #endregion Others
 
         #region ToolStripButtonClicks
@@ -542,46 +558,47 @@ namespace MainApp
 
         private void SetIDType()
         {
+            AddLog("Adding IDs");
             for (int i = 1; i <= 4; i++)
             {
                 ComboBox cb = (ComboBox)Controls.Find("cmbTitleIDType" + i, true)[0];
                 cb.Items.AddRange(new string[] { "ARTN", "DOI", "PII", "PMID", "SICI", "UNSP" });
             }
         }
-
         private void TextBoxEnter(object sender, EventArgs e)
         {
             _lastFocusedControl = (Control)sender;
         }
-
         private void LoadImage(string itemName,int seq)
         {
+            AddLog($"Loading image {itemName}_{seq}.TIF");
             currentImage = $"{paths.Folders.Input_Dir}\\{itemName}\\{itemName}_{seq}.TIF";
             pbeImage.ImageLocation = currentImage;
         }
-
         private void BwRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            AddLog("Called");
             tsProgress.Style = ProgressBarStyle.Continuous;
             tsProgress.MarqueeAnimationSpeed = 0;
             tsStatus.Text = "Ready";
-        }        
-
-        private void AddLog(string log)
-        {
-            sbLog.AppendLine($"{DateTime.Now.ToString()} : {log}");
         }
-
+        //[System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
+        //[System.Runtime.CompilerServices.CallerLineNumber]  int sourceLineNumber = 0 )
+        public void AddLog(string log, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
+        {            
+            sbLog.AppendLine($"{DateTime.Now.ToString()} : {memberName} : {log} ;");
+        }
         private void AdjustWindow()
         {
+            AddLog("Adjusting window");
             this.Width = Screen.PrimaryScreen.WorkingArea.Width;
             this.Height = Screen.PrimaryScreen.WorkingArea.Height;
             this.Left = 0;
             this.Top = 0;
         }
-
         public string[] ReadAllLines(String path)
         {
+            AddLog("Called");
             using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (StreamReader streamReader = new StreamReader(fileStream))
             {
@@ -593,22 +610,22 @@ namespace MainApp
                 return file.ToArray();
             }
         }
-
         private void SetText(string strText)
         {
+            AddLog("Called");
             if (ctlTextBox.InvokeRequired)
             {
                 SetTextCallback setTextCallback = new SetTextCallback(SetText);
                 this.Invoke(setTextCallback, new object[] { strText });
+                AddLog("Invoked");
             }
             else
             {
                 ctlTextBox.Text = strText;
             }
         }
-
         private void SetTextBoxEnterEvents(Control control)
-        {
+        {            
             if ((control is TextBox) || (control is RichTextBox))
             {
                 control.Enter += new EventHandler(TextBoxEnter);
@@ -622,10 +639,9 @@ namespace MainApp
                 }
             }
         }
-
         private void ProcessXML(string ItemName)
         {
-            //Console.WriteLine("Generic Serialization/Deserialization");
+            AddLog("Called");
 
             SerializeDeserialize<ISSUE> serializeIssue;
 
@@ -639,24 +655,37 @@ namespace MainApp
 
             xmldocument.Load(currentXML);
 
+            AddLog("Deserializing");
             ISSUE deserializedIssues = serializeIssue.DeserializeData(xmldocument.OuterXml);
 
-            Console.WriteLine("ID_ACCESSION : {0} ,  JS_JOURNALSEQ :{1} ,YR_PUBLYEAR : {2}", deserializedIssues.ID_ACCESSION, deserializedIssues.JS_JOURNALSEQ, deserializedIssues.YR_PUBLYEAR);
+            ListViewItem listViewItem = new ListViewItem();
+            listViewItem.SubItems.AddRange(new string[]
+            {
+                "1", deserializedIssues.ID_ACCESSION, deserializedIssues.ITEM[0].ITEMNO,
+                "A", "AR", "Progress", deserializedIssues.ITEM[0].ITEM_CONTENT.PG_PAGESPAN
+            });
 
-            Console.WriteLine("--------------------------------------------------------------------------------");
+            lvItems.Items.Add(listViewItem);
 
-            Console.WriteLine("-----Serialized Data-----");
+            LoadImage(ItemName, Convert.ToInt32(deserializedIssues.ITEM[0].ITEM_CONTENT.PG_PAGESPAN.Split('-')[0]));
+            //Console.WriteLine("ID_ACCESSION : {0} ,  JS_JOURNALSEQ :{1} ,YR_PUBLYEAR : {2}", deserializedIssues.ID_ACCESSION, deserializedIssues.JS_JOURNALSEQ, deserializedIssues.YR_PUBLYEAR);
 
-            Console.WriteLine("--------------------------------------------------------------------------------");                     
+            //Console.WriteLine("--------------------------------------------------------------------------------");
 
+            //Console.WriteLine("-----Serialized Data-----");
+
+            //Console.WriteLine("--------------------------------------------------------------------------------");
+
+            AddLog("Serializing");
             string serializedIssues = serializeIssue.SerializeData(deserializedIssues);
 
             Directory.CreateDirectory($"{paths.Folders.Output_Dir}\\{ItemName}\\");
 
             xmldocument.LoadXml(serializedIssues);
 
-            using (TextWriter streamWriter = new StreamWriter($"{paths.Folders.Output_Dir}\\{ItemName}\\{ItemName}.XML", false, Encoding.UTF8))
+            using (StreamWriter streamWriter = new StreamWriter($"{paths.Folders.Output_Dir}\\{ItemName}\\{ItemName}.XML", false, Encoding.UTF8))
             {
+                AddLog($"Saving {((FileStream)streamWriter.BaseStream).Name}");
                 //streamWriter.Write(serializedIssues);             //For UTF-16 encoding
                 xmldocument.Save(streamWriter);                     //For UTF-8 encoding
             }
@@ -666,9 +695,8 @@ namespace MainApp
             Console.WriteLine(serializedIssues);
 
             Console.WriteLine("--------------------------------------------------------------------------------");
-        }        
+        }
 
-        #endregion CommonMethods    
-
+        #endregion CommonMethods           
     }
 }
