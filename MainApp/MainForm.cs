@@ -51,7 +51,7 @@ namespace MainApp
         public MainForm()
         {
             sbLog = new StringBuilder();
-            
+
             InitializeComponent();
 
             //bw_OCR_Selection = new BackgroundWorker();
@@ -59,16 +59,16 @@ namespace MainApp
             //ConvertTifToPDF("BL7CX160A");
             //bw_OCR_AllPages.DoWork += ConvertTifToPDF;
             //bw_OCR_AllPages.RunWorkerCompleted += BwOAPCompleted;
-                        
+
             AdjustWindow();
-            
+
             SetTextBoxEnterEvents(this);
-                        
+
             SetIDType();
 
             _lastFocusedControl = txtTitleTitle;
 
-            txtTitleTitle.Focus();            
+            txtTitleTitle.Focus();
 
             using (LoginForm loginForm = new LoginForm())
             {
@@ -76,7 +76,7 @@ namespace MainApp
                 while (loginForm.UserName == null) Application.DoEvents();
                 UserName = loginForm.UserName;
             }
-                        
+
             RunApp();
 
             new Helper().WriteLog(sbLog.ToString());
@@ -91,7 +91,6 @@ namespace MainApp
                 Name = "GY8QJ",
                 FolderName = "GY8QJ"
             };
-
 
             string UserShortName;
             try
@@ -191,7 +190,7 @@ namespace MainApp
                 {
                     Accession, Item,PG, DocType, "Waiting ...", PageSpan
                 });
-                _ = lvItems.Items.Add(listViewItem);                
+                _ = lvItems.Items.Add(listViewItem);
             }
             lvItems.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
@@ -225,7 +224,7 @@ namespace MainApp
             LoadValues(deserializedIssues);
 
             //LoadPDF(objAccn.FullPath(), objAccn.CurrentItem, deserializedIssues.ITEM[0].ITEM_CONTENT.PG_PAGESPAN);
-            LoadPDF($"{objAccn.CurrentDirectory}\\{objAccn.FolderName}", objAccn.CurrentItem);
+            LoadPDF($"{objAccn.CurrentDirectory}\\{objAccn.FolderName}\\OCR_PDF", objAccn.CurrentItem);
 
             lvItems.Items[objAccession.ProcessedItems.Count].SubItems[5].Text = "In Progress";
             lvItems.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -637,6 +636,30 @@ namespace MainApp
                 SpellCheck(rtbAbstract);
             }
         }
+        private void TsbSwitchPages_Click(object sender, EventArgs e)
+        {
+            if (((ToolStripButton)sender).Text == "CP")
+            {
+                ((ToolStripButton)sender).Text = "NP";
+                ((ToolStripButton)sender).ToolTipText = "Switch to Main Pages";
+                LoadPDF($"{objAccession.CurrentDirectory}\\{objAccession.FolderName}\\OCR_PDF\\CP", objAccession.Name + "_CP");
+            }
+            else
+            {
+                ((ToolStripButton)sender).Text = "CP";
+                ((ToolStripButton)sender).ToolTipText = "Switch to Content Pages";
+                LoadPDF($"{objAccession.CurrentDirectory}\\{objAccession.FolderName}\\OCR_PDF", objAccession.CurrentItem);
+            }
+        }
+        private void TsbArrangeKW_Click(object sender, EventArgs e)
+        {
+            string keyWords = txtKeywords.Text;
+            if (!string.IsNullOrWhiteSpace(keyWords))
+            {
+                keyWords = keyWords.Replace(";", Environment.NewLine);
+                txtKeywords.Text = keyWords;
+            }
+        }
 
         #endregion ToolStripButtonClicks
 
@@ -668,6 +691,8 @@ namespace MainApp
             objAccession.UnprocessedItems.Remove(objAccession.CurrentItem);
             lvItems.Items[objAccession.ProcessedItems.Count - 1].SubItems[5].Text = "Completed";
             lvItems.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+            ClearInputFields();
+
             if (objAccession.UnprocessedItems.Count == 0)
             {
                 try
@@ -683,11 +708,13 @@ namespace MainApp
                 }
             }
             else
-            {                
+            {
                 objAccession.CurrentItem = objAccession.UnprocessedItems.FirstOrDefault();
                 ProcessItem(objAccession);
             }
         }
+
+        
 
         #endregion MenuButtonClicks
 
@@ -898,7 +925,7 @@ namespace MainApp
 
             LoadValues(deserializedIssues);
 
-            LoadPDF(Accession, Item);
+            LoadPDF(Accession + "\\", Item);
 
         }
         private void LoadValues(ISSUE issue)
@@ -1205,9 +1232,34 @@ namespace MainApp
         private void LoadPDF(string dir, string fName)
         {
             //PDFReader.LoadFile($"{paths.Folders.Input_Dir}\\{itemName}\\OCR_PDF\\{itemName}_{page}.pdf");
-            PDFReader.LoadFile($"{dir}\\OCR_PDF\\{fName}.pdf");
+            _ = PDFReader.LoadFile($"{dir}\\{fName}.pdf");
+        }
+        private void ClearInputFields()
+        {
+            txtTitleTitle.Clear();
+            txtTitleFTitle.Clear();
+            txtTitleID1.Clear();
+            txtTitleID2.Clear();
+            txtTitleID3.Clear();
+            txtTitleID4.Clear();
+            cmbTitleIDType1.Text = "";
+            cmbTitleIDType2.Text = "";
+            cmbTitleIDType3.Text = "";
+            cmbTitleIDType4.Text = "";
+            txtTitleILang.Clear();
+            txtTitleMAbs.Clear();
+            txtTitlePRange.Clear();
+            txtTitleURL.Clear();
+            txtTitleURLDate.Clear();
+
+            txtKeywords.Clear();
+
+            rtbAbstract.Clear();
+
+            PDFReader.src = null;
         }
 
-        #endregion CommonMethods
-    }
+        #endregion CommonMethods        
+
+    }  
 }

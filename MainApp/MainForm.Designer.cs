@@ -138,8 +138,8 @@
             this.tsbTopHalf = new System.Windows.Forms.ToolStripButton();
             this.tsbBottomHalf = new System.Windows.Forms.ToolStripButton();
             this.tsbSpellCheck = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton9 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton10 = new System.Windows.Forms.ToolStripButton();
+            this.tsbSwitchPage = new System.Windows.Forms.ToolStripButton();
+            this.tsbArrangeKW = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton11 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton12 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton13 = new System.Windows.Forms.ToolStripButton();
@@ -1241,8 +1241,8 @@
             this.tsbTopHalf,
             this.tsbBottomHalf,
             this.tsbSpellCheck,
-            this.toolStripButton9,
-            this.toolStripButton10,
+            this.tsbSwitchPage,
+            this.tsbArrangeKW,
             this.toolStripButton11,
             this.toolStripButton12,
             this.toolStripButton13,
@@ -1275,7 +1275,7 @@
             this.tsbTopLeft.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbTopLeft.Name = "tsbTopLeft";
             this.tsbTopLeft.RightToLeftAutoMirrorImage = true;
-            this.tsbTopLeft.Size = new System.Drawing.Size(26, 19);
+            this.tsbTopLeft.Size = new System.Drawing.Size(28, 19);
             this.tsbTopLeft.Text = "TL";
             this.tsbTopLeft.ToolTipText = "Top Left View";
             this.tsbTopLeft.Click += new System.EventHandler(this.TsbTopLeft_Click);
@@ -1286,7 +1286,7 @@
             this.tsbTopRight.Image = ((System.Drawing.Image)(resources.GetObject("tsbTopRight.Image")));
             this.tsbTopRight.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbTopRight.Name = "tsbTopRight";
-            this.tsbTopRight.Size = new System.Drawing.Size(26, 19);
+            this.tsbTopRight.Size = new System.Drawing.Size(28, 19);
             this.tsbTopRight.Text = "TR";
             this.tsbTopRight.ToolTipText = "Top Right View";
             this.tsbTopRight.Click += new System.EventHandler(this.TsbTopRight_Click);
@@ -1297,7 +1297,7 @@
             this.tsbBottomLeft.Image = ((System.Drawing.Image)(resources.GetObject("tsbBottomLeft.Image")));
             this.tsbBottomLeft.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbBottomLeft.Name = "tsbBottomLeft";
-            this.tsbBottomLeft.Size = new System.Drawing.Size(26, 19);
+            this.tsbBottomLeft.Size = new System.Drawing.Size(28, 19);
             this.tsbBottomLeft.Text = "BL";
             this.tsbBottomLeft.ToolTipText = "Bottom Left View";
             this.tsbBottomLeft.Click += new System.EventHandler(this.TsbBottomLeft_Click);
@@ -1308,7 +1308,7 @@
             this.tsbBottomRight.Image = ((System.Drawing.Image)(resources.GetObject("tsbBottomRight.Image")));
             this.tsbBottomRight.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbBottomRight.Name = "tsbBottomRight";
-            this.tsbBottomRight.Size = new System.Drawing.Size(26, 19);
+            this.tsbBottomRight.Size = new System.Drawing.Size(28, 19);
             this.tsbBottomRight.Text = "BR";
             this.tsbBottomRight.ToolTipText = "Bottom Right View";
             this.tsbBottomRight.Click += new System.EventHandler(this.TsbBottomRight_Click);
@@ -1319,7 +1319,7 @@
             this.tsbTopHalf.Image = ((System.Drawing.Image)(resources.GetObject("tsbTopHalf.Image")));
             this.tsbTopHalf.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbTopHalf.Name = "tsbTopHalf";
-            this.tsbTopHalf.Size = new System.Drawing.Size(26, 19);
+            this.tsbTopHalf.Size = new System.Drawing.Size(28, 19);
             this.tsbTopHalf.Text = "TH";
             this.tsbTopHalf.ToolTipText = "Top Half View";
             this.tsbTopHalf.Click += new System.EventHandler(this.TsbTopHalf_Click);
@@ -1330,7 +1330,7 @@
             this.tsbBottomHalf.Image = ((System.Drawing.Image)(resources.GetObject("tsbBottomHalf.Image")));
             this.tsbBottomHalf.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbBottomHalf.Name = "tsbBottomHalf";
-            this.tsbBottomHalf.Size = new System.Drawing.Size(26, 19);
+            this.tsbBottomHalf.Size = new System.Drawing.Size(28, 19);
             this.tsbBottomHalf.Text = "BH";
             this.tsbBottomHalf.ToolTipText = "Bottom Half View";
             this.tsbBottomHalf.Click += new System.EventHandler(this.TsbBottomHalf_Click);
@@ -1341,28 +1341,32 @@
             this.tsbSpellCheck.Image = ((System.Drawing.Image)(resources.GetObject("tsbSpellCheck.Image")));
             this.tsbSpellCheck.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbSpellCheck.Name = "tsbSpellCheck";
-            this.tsbSpellCheck.Size = new System.Drawing.Size(26, 19);
+            this.tsbSpellCheck.Size = new System.Drawing.Size(28, 19);
             this.tsbSpellCheck.Text = "SC";
             this.tsbSpellCheck.ToolTipText = "Check Spelling";
             this.tsbSpellCheck.Click += new System.EventHandler(this.TsbSpellCheck_Click);
             // 
-            // toolStripButton9
+            // tsbSwitchPage
             // 
-            this.toolStripButton9.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton9.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton9.Image")));
-            this.toolStripButton9.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton9.Name = "toolStripButton9";
-            this.toolStripButton9.Size = new System.Drawing.Size(26, 20);
-            this.toolStripButton9.Text = "toolStripButton9";
+            this.tsbSwitchPage.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbSwitchPage.Image = ((System.Drawing.Image)(resources.GetObject("tsbSwitchPage.Image")));
+            this.tsbSwitchPage.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbSwitchPage.Name = "tsbSwitchPage";
+            this.tsbSwitchPage.Size = new System.Drawing.Size(28, 19);
+            this.tsbSwitchPage.Text = "CP";
+            this.tsbSwitchPage.ToolTipText = "Switch to Content Pages";
+            this.tsbSwitchPage.Click += new System.EventHandler(this.TsbSwitchPages_Click);
             // 
-            // toolStripButton10
+            // tsbArrangeKW
             // 
-            this.toolStripButton10.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton10.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton10.Image")));
-            this.toolStripButton10.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton10.Name = "toolStripButton10";
-            this.toolStripButton10.Size = new System.Drawing.Size(26, 20);
-            this.toolStripButton10.Text = "toolStripButton10";
+            this.tsbArrangeKW.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbArrangeKW.Image = ((System.Drawing.Image)(resources.GetObject("tsbArrangeKW.Image")));
+            this.tsbArrangeKW.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbArrangeKW.Name = "tsbArrangeKW";
+            this.tsbArrangeKW.Size = new System.Drawing.Size(28, 19);
+            this.tsbArrangeKW.Text = "KW";
+            this.tsbArrangeKW.ToolTipText = "Arrange Keywords";
+            this.tsbArrangeKW.Click += new System.EventHandler(this.TsbArrangeKW_Click);
             // 
             // toolStripButton11
             // 
@@ -1370,7 +1374,7 @@
             this.toolStripButton11.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton11.Image")));
             this.toolStripButton11.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton11.Name = "toolStripButton11";
-            this.toolStripButton11.Size = new System.Drawing.Size(26, 20);
+            this.toolStripButton11.Size = new System.Drawing.Size(28, 20);
             this.toolStripButton11.Text = "toolStripButton11";
             // 
             // toolStripButton12
@@ -1379,7 +1383,7 @@
             this.toolStripButton12.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton12.Image")));
             this.toolStripButton12.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton12.Name = "toolStripButton12";
-            this.toolStripButton12.Size = new System.Drawing.Size(26, 20);
+            this.toolStripButton12.Size = new System.Drawing.Size(28, 20);
             this.toolStripButton12.Text = "toolStripButton12";
             // 
             // toolStripButton13
@@ -1388,7 +1392,7 @@
             this.toolStripButton13.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton13.Image")));
             this.toolStripButton13.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton13.Name = "toolStripButton13";
-            this.toolStripButton13.Size = new System.Drawing.Size(26, 20);
+            this.toolStripButton13.Size = new System.Drawing.Size(28, 20);
             this.toolStripButton13.Text = "toolStripButton13";
             // 
             // toolStripButton14
@@ -1397,7 +1401,7 @@
             this.toolStripButton14.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton14.Image")));
             this.toolStripButton14.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton14.Name = "toolStripButton14";
-            this.toolStripButton14.Size = new System.Drawing.Size(26, 20);
+            this.toolStripButton14.Size = new System.Drawing.Size(28, 20);
             this.toolStripButton14.Text = "toolStripButton14";
             // 
             // toolStripButton15
@@ -1406,7 +1410,7 @@
             this.toolStripButton15.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton15.Image")));
             this.toolStripButton15.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton15.Name = "toolStripButton15";
-            this.toolStripButton15.Size = new System.Drawing.Size(26, 20);
+            this.toolStripButton15.Size = new System.Drawing.Size(28, 20);
             this.toolStripButton15.Text = "toolStripButton15";
             // 
             // toolStripButton16
@@ -1415,7 +1419,7 @@
             this.toolStripButton16.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton16.Image")));
             this.toolStripButton16.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton16.Name = "toolStripButton16";
-            this.toolStripButton16.Size = new System.Drawing.Size(26, 20);
+            this.toolStripButton16.Size = new System.Drawing.Size(28, 20);
             this.toolStripButton16.Text = "toolStripButton16";
             // 
             // tsbUndo
@@ -1423,7 +1427,7 @@
             this.tsbUndo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.tsbUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbUndo.Name = "tsbUndo";
-            this.tsbUndo.Size = new System.Drawing.Size(26, 4);
+            this.tsbUndo.Size = new System.Drawing.Size(28, 4);
             this.tsbUndo.Text = "toolStripButton17";
             this.tsbUndo.ToolTipText = "Undo Abstract";
             this.tsbUndo.Click += new System.EventHandler(this.TsbUndo_Click);
@@ -1648,8 +1652,8 @@
         private System.Windows.Forms.ToolStripButton tsbTopHalf;
         private System.Windows.Forms.ToolStripButton tsbBottomHalf;
         private System.Windows.Forms.ToolStripButton tsbSpellCheck;
-        private System.Windows.Forms.ToolStripButton toolStripButton9;
-        private System.Windows.Forms.ToolStripButton toolStripButton10;
+        private System.Windows.Forms.ToolStripButton tsbSwitchPage;
+        private System.Windows.Forms.ToolStripButton tsbArrangeKW;
         private System.Windows.Forms.ToolStripButton toolStripButton11;
         private System.Windows.Forms.ToolStripButton toolStripButton12;
         private System.Windows.Forms.ToolStripButton toolStripButton13;
