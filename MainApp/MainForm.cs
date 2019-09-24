@@ -3,6 +3,7 @@ using NHunspell;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -10,8 +11,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
-using System.Xml.Linq;
 using System.Xml.Serialization;
+using Tesseract;
 using tessnet2;
 
 namespace MainApp
@@ -23,13 +24,16 @@ namespace MainApp
         private readonly StringBuilder sbLog;
         private Point mouseDown;
         private Point mouseUp;
-        private readonly BackgroundWorker backgroundWorker;
+        //private readonly BackgroundWorker bw_OCR_Selection; 
+        //private readonly BackgroundWorker bw_OCR_AllPages;
         private Rectangle rect;
-        private Control ctlTextBox;
-        private string strText;
+        //private Control ctlTextBox;
+        //private string strText;
         delegate void SetTextCallback(string text);
         delegate void SpellCheckCallback(RichTextBox rtb);
         private Control _lastFocusedControl;
+        //private readonly string currentDir;
+        //private readonly string currentAccession;
         private string wordToCheck;
         private string oldText;
         private string currentImage;
@@ -38,105 +42,273 @@ namespace MainApp
         SerializeDeserialize<ISSUE> serializeIssue;
         ISSUE deserializedIssues;
         private string currentItem;
+        private static readonly int WM_SETREDRAW = 11;
+        private ACCESSION objAccession;
+        public string UserName;
 
         #endregion Declaration
 
         public MainForm()
         {
             sbLog = new StringBuilder();
-
-            backgroundWorker = new BackgroundWorker();
-
+            
             InitializeComponent();
 
+            //bw_OCR_Selection = new BackgroundWorker();
+            //bw_OCR_AllPages = new BackgroundWorker();
+            //ConvertTifToPDF("BL7CX160A");
+            //bw_OCR_AllPages.DoWork += ConvertTifToPDF;
+            //bw_OCR_AllPages.RunWorkerCompleted += BwOAPCompleted;
+                        
             AdjustWindow();
-
-            SetTextBoxEnterEvents(this);
-
-            SetIDType();
             
+            SetTextBoxEnterEvents(this);
+                        
+            SetIDType();
+
             _lastFocusedControl = txtTitleTitle;
 
-            currentItem = "BL7CX160A";
+            txtTitleTitle.Focus();            
 
-            ProcessXML(currentItem);
+            using (LoginForm loginForm = new LoginForm())
+            {
+                loginForm.Show();
+                while (loginForm.UserName == null) Application.DoEvents();
+                UserName = loginForm.UserName;
+            }
+                        
+            RunApp();
 
-            txtTitleTitle.Focus();
+            new Helper().WriteLog(sbLog.ToString());
+        }
 
-            backgroundWorker.DoWork += ConvertImageToText;
-            backgroundWorker.RunWorkerCompleted += BwRunWorkerCompleted;
+        private void RunApp()
+        {
+            AddLog("Started");
+            objAccession = new ACCESSION
+            {
+                ParentDirectory = paths.Folders.Priority_Dir,
+                Name = "GY8QJ",
+                FolderName = "GY8QJ"
+            };
 
-            backgroundWorker.Dispose();
+
+            string UserShortName;
+            try
+            {
+                UserShortName = UserName.Substring(0, 10);
+            }
+            catch (Exception)
+            {
+                UserShortName = UserName;
+            }
+
+            DirectoryInfo di = new DirectoryInfo(objAccession.FullPath());
+            di.MoveTo(di.FullName + "." + UserShortName);
+            objAccession.FolderName = di.Name;
+
+            //ProcessAccession(currentDir + Path.DirectorySeparatorChar + currentAccession);    
+
+            AddLog("ProcessAccession");
+            ProcessAccession();
+
+            //bw_OCR_Selection.DoWork += ConvertImageToText;
+            //bw_OCR_Selection.RunWorkerCompleted += BwOSCompleted;
+            //bw_OCR_Selection.Dispose();
+
+            //bw_OCR_AllPages.Dispose();
+        }
+
+        private void ProcessAccession()
+        {
+            AddLog("Processing Accession " + objAccession.Name);
+            int num = 0;
+            Helper helper = new Helper();
+
+            if (objAccession.FolderName.Contains("."))
+            {
+                if (!UserName.Contains(objAccession.FolderName.Split('.').LastOrDefault()))
+                {
+                    AddLog($"The file {objAccession.FolderName.Split('.').FirstOrDefault()} locked by another user");
+                    return;
+                }
+                else
+                {
+                    if (Directory.Exists(paths.Folders.Current_Dir + "\\" + objAccession.Name))
+                    {
+                        AddLog($"{paths.Folders.Current_Dir + "\\" + objAccession.Name} already exist and will be renamed");
+                        Directory.Move(paths.Folders.Current_Dir + "\\" + objAccession.Name,
+                            paths.Folders.Current_Dir + "\\" + objAccession.Name + "." + helper.GetTimeStamp());
+                    }
+                    try
+                    {
+                        Directory.Move(objAccession.FullPath(), paths.Folders.Current_Dir + "\\" + objAccession.Name);
+                        objAccession.FolderName = objAccession.Name;
+                    }
+                    catch (Exception)
+                    {
+                        AddLog("Could move to Current directory");
+                    }
+
+                    objAccession.CurrentDirectory = paths.Folders.Current_Dir;
+                }
+            }
+            else
+            {
+                AddLog($"The file {objAccession.FolderName.Split('.').FirstOrDefault()} not locked");
+                return;
+            }
+            foreach (string dir in Directory.GetDirectories(objAccession.CurrentDirectory + "\\" + objAccession.Name, objAccession.Name + "*"))
+            {
+                string itemName = helper.GetFolder(dir);
+
+                objAccession.Items.Add(itemName);
+                objAccession.UnprocessedItems.Add(itemName);
+
+                string xmlFile = dir + "\\" + itemName + ".XML";
+
+                XmlDocument xmlDoc = new XmlDocument();
+
+                try
+                {
+                    AddLog("Loading xml " + xmlFile);
+                    xmlDoc.Load(xmlFile);
+                }
+                catch (Exception e)
+                {
+                    AddLog(e.Message);
+                }
+
+                num++;
+                string Accession = xmlDoc.SelectSingleNode("//ID_ACCESSION").InnerText;
+                string Item = xmlDoc.SelectSingleNode("//ITEM").Attributes["ITEMNO"].Value;
+                string PG = itemName.Substring(itemName.Length - 1, 1);
+                string DocType = xmlDoc.SelectSingleNode("//DT_DOCUMENTTYPE").InnerText;
+                string PageSpan = xmlDoc.SelectSingleNode("//PG_PAGESPAN").InnerText;
+
+                ListViewItem listViewItem = new ListViewItem(num.ToString());
+                listViewItem.SubItems.AddRange(new string[]
+                {
+                    Accession, Item,PG, DocType, "Waiting ...", PageSpan
+                });
+                _ = lvItems.Items.Add(listViewItem);                
+            }
+            lvItems.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+            //ProcessXML(accnDir, objAccession.Items[0]);
+            if (objAccession.UnprocessedItems.Count != 0)
+            {
+                objAccession.CurrentItem = objAccession.UnprocessedItems.FirstOrDefault();
+                AddLog("Process item");
+                ProcessItem(objAccession);
+            }
+            AddLog($"Accession {objAccession.Name} completed");
+        }
+
+        private void ProcessItem(ACCESSION objAccn)
+        {
+            AddLog("Processing item " + objAccn.CurrentItem);
+
+            serializeIssue = new SerializeDeserialize<ISSUE>();
+
+            string currentXML = $"{objAccn.CurrentDirectory}\\{objAccn.FolderName}\\{objAccn.CurrentItem}\\{objAccn.CurrentItem}.XML";
+
+            //currentItem = Item;
+
+            XmlDocument xmldoc = new XmlDocument();
+
+            xmldoc.Load(currentXML);
+
+            AddLog("Deserializing");
+            deserializedIssues = serializeIssue.DeserializeData(xmldoc.OuterXml);
+
+            LoadValues(deserializedIssues);
+
+            //LoadPDF(objAccn.FullPath(), objAccn.CurrentItem, deserializedIssues.ITEM[0].ITEM_CONTENT.PG_PAGESPAN);
+            LoadPDF($"{objAccn.CurrentDirectory}\\{objAccn.FolderName}", objAccn.CurrentItem);
+
+            lvItems.Items[objAccession.ProcessedItems.Count].SubItems[5].Text = "In Progress";
+            lvItems.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+            tcTagArea.SelectedTab = tpTitle;
+            _ = txtTitleTitle.Focus();
+        }
+
+        private void BwOAPCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            tsStatusSecondary.Text = "OCR Completed";
         }
 
         #region OCR
 
-        public void ConvertImageToText(object sender, DoWorkEventArgs doWorkEventArgs)
-        {
-            if (_lastFocusedControl != null)
-            {
-                ctlTextBox = _lastFocusedControl;
-            }
-            else
-            {
-                MessageBox.Show("Select a field to copy text");
-                return;
-            }
-            
-            Bitmap image = (Bitmap)pbeImage.Image; 
-                        
-            StringBuilder sbOcrText = new StringBuilder();
-            using (Tesseract ocr = new Tesseract())
-            {
-                _ = ocr.Init(paths.Folders.Ocrdata_Dir,"eng", false);
-                List<Word> result;
-                if (rect.X < 0)
-                {
-                    rect.Width = rect.Width + rect.X;
-                    rect.X = 0;
-                }
-                if (rect.Y < 0)
-                {
-                    rect.Height = rect.Height + rect.Y;
-                    rect.Y = 0;
-                }
-                System.Threading.Thread.Sleep(100);
-                if (rect.X + rect.Width > image.Width)
-                {
-                    rect = new Rectangle(rect.X, rect.Y, image.Width - rect.X, rect.Height);
-                }
-                if (rect.Y + rect.Height > image.Height)
-                {
-                    rect = new Rectangle(rect.X, rect.Y, rect.Width, image.Height - rect.Y);
-                }
-                if (rect.Width < 0) return;
-                if (rect.Height < 0) return;
-                try
-                {
-                    result = ocr.DoOCR(image, rect);
-                }
-                catch (Exception)
-                {
-                    tsStatus.Text = "Unable to Read. Try to Draw inside bounds";
-                    return;
-                }
+        //public void ConvertImageToText(object sender, DoWorkEventArgs doWorkEventArgs)
+        //{
+        //    if (_lastFocusedControl != null)
+        //    {
+        //        ctlTextBox = _lastFocusedControl;
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show("Select a field to copy text");
+        //        return;
+        //    }
 
-                for (int i = 0; i < Tesseract.LineCount(result); i++)
-                {
-                    _ = sbOcrText.Append(Tesseract.GetLineText(result, i) + " ");
-                }
+        //    Bitmap image = (Bitmap)pbeImage.Image; 
 
-                strText = sbOcrText.ToString();
-                SetText(strText);
-                SpellCheck(rtbAbstract);
-            }
-            
-        }
+        //    StringBuilder sbOcrText = new StringBuilder();
+        //    using (Tesseract ocr = new Tesseract())
+        //    {
+        //        _ = ocr.Init(paths.Folders.Ocrdata_Dir,"eng", false);
+        //        List<Word> result;
+        //        if (rect.X < 0)
+        //        {
+        //            rect.Width += rect.X;
+        //            rect.X = 0;
+        //        }
+        //        if (rect.Y < 0)
+        //        {
+        //            rect.Height += rect.Y;
+        //            rect.Y = 0;
+        //        }
+
+        //        //Allow time for resource to be released
+        //        System.Threading.Thread.Sleep(100);
+
+        //        if (rect.X + rect.Width > image.Width)
+        //        {
+        //            rect = new Rectangle(rect.X, rect.Y, image.Width - rect.X, rect.Height);
+        //        }
+        //        if (rect.Y + rect.Height > image.Height)
+        //        {
+        //            rect = new Rectangle(rect.X, rect.Y, rect.Width, image.Height - rect.Y);
+        //        }
+        //        if (rect.Width < 0) return;
+        //        if (rect.Height < 0) return;
+        //        try
+        //        {
+        //            result = ocr.DoOCR( image, rect);
+        //        }
+        //        catch (Exception)
+        //        {
+        //            tsStatusPrimary.Text = "Unable to Read. Try to Draw inside bounds";
+        //            return;
+        //        }
+
+        //        for (int i = 0; i < Tesseract.LineCount(result); i++)
+        //        {
+        //            _ = sbOcrText.Append(Tesseract.GetLineText(result, i) + " ");
+        //        }
+
+        //        strText = sbOcrText.ToString();
+        //        SetText(strText);
+        //        SpellCheck(rtbAbstract);
+        //    }
+
+        //}
 
         #endregion OCR
 
         #region SpellChecker
-
         private void SpellCheck(RichTextBox rtb)
         {
             AddLog("Enter");
@@ -151,48 +323,59 @@ namespace MainApp
             else
             {
                 AddLog("Started");
-                rtb.SuspendLayout();
+                //rtb.SuspendLayout();
+                BeginControlUpdate(rtb);
+                //Font fontRTB = new Font(rtbAbstract.Font.FontFamily, rtbAbstract.Font.Size, FontStyle.Regular);
 
-                Font fontRTB = new Font(rtbAbstract.Font.FontFamily, rtbAbstract.Font.Size, FontStyle.Regular);
+                rtb.SelectAll();
+                rtb.SelectionBackColor = Color.White;
 
-                using (Hunspell hunspell = new Hunspell(paths.Files.En_aff_file , paths.Files.En_dic_file))
+                try
                 {
-                    if (File.Exists(paths.Files.CustomWordsPath))
+                    using (Hunspell hunspell = new Hunspell(paths.Files.En_aff_file, paths.Files.En_dic_file))
                     {
-                        string[] lines = ReadAllLines(paths.Files.CustomWordsPath);
-                        AddLog("Adding custom words");
-                        foreach (string line in lines)
+                        if (File.Exists(paths.Files.CustomWordsPath))
                         {
-                            hunspell.Add(line);
-                        }
-                    }
-
-                    AddLog("Checking spelling");
-                    foreach (string word in rtb.Text.Split(' '))
-                    {
-                        string newWords = Regex.Replace(word, @"[^a-zA-Z]+", " ");
-                        foreach(string newWord in newWords.Split(' '))
-                        {
-                            bool isCorrect = hunspell.Spell(newWord);
-                            if (!isCorrect)
+                            string[] lines = ReadAllLines(paths.Files.CustomWordsPath);
+                            AddLog("Adding custom words");
+                            foreach (string line in lines)
                             {
-                                rtb.SelectionStart = rtb.Text.IndexOf(word) + word.IndexOf(newWord);
-                                rtb.SelectionLength = newWord.Length;
-                                rtb.SelectionFont = new Font(fontRTB.FontFamily, fontRTB.Size + 1, FontStyle.Underline);
+                                hunspell.Add(line);
                             }
-                            else
+                        }
+
+                        AddLog("Checking spelling");
+                        foreach (string word in rtb.Text.Split(' '))
+                        {
+                            string newWords = Regex.Replace(word, @"[^a-zA-Z0-9]+", " ");
+                            foreach (string newWord in newWords.Split(' '))
                             {
-                                rtb.SelectionStart = rtb.Text.IndexOf(word) + word.IndexOf(newWord);
-                                rtb.SelectionLength = newWord.Length;
-                                rtb.SelectionFont = new Font(fontRTB.FontFamily, fontRTB.Size, FontStyle.Regular);
+                                bool isCorrect = hunspell.Spell(newWord);
+                                if (!isCorrect)
+                                {
+                                    rtb.SelectionStart = rtb.Text.IndexOf(word) + word.IndexOf(newWord);
+                                    rtb.SelectionLength = newWord.Length;
+                                    //rtb.SelectionFont = new Font(fontRTB.FontFamily, fontRTB.Size, FontStyle.Underline);
+                                    rtb.SelectionBackColor = Color.LightPink;
+                                }
+                                else
+                                {
+                                    rtb.SelectionStart = rtb.Text.IndexOf(word) + word.IndexOf(newWord);
+                                    rtb.SelectionLength = newWord.Length;
+                                    //rtb.SelectionFont = new Font(fontRTB.FontFamily, fontRTB.Size, FontStyle.Regular);
+                                    rtb.SelectionBackColor = rtb.BackColor;
+                                }
                             }
                         }
                     }
                 }
-                fontRTB.Dispose();
+                catch (Exception e)
+                {
+                    AddLog(e.Message);
+                }
             }
 
-            rtb.ResumeLayout();
+            EndControlUpdate(rtb);
             AddLog("Exit");
         }
         private void SuggestionClicked(object sender, EventArgs e)
@@ -238,7 +421,7 @@ namespace MainApp
                         streamWriter.WriteLine(wordToCheck);
                     }
                 }
-            }            
+            }
             SpellCheck(rtbAbstract);
         }
         private void ShowSpellChecker(string word)
@@ -302,30 +485,28 @@ namespace MainApp
             {
                 mouseUp = e.Location;
                 mouseUp = pbeImage.TranslatePointToImageCoordinates(mouseUp);
-               
+
                 rect = new Rectangle(Math.Min(mouseDown.X, mouseUp.X), Math.Min(mouseDown.Y, mouseUp.Y), Math.Abs(mouseDown.X - mouseUp.X), Math.Abs(mouseDown.Y - mouseUp.Y));
-                //rect = new Rectangle(mouseDown.X, mouseDown.Y, mouseUp.X - mouseDown.X, mouseUp.Y - mouseDown.Y);
                 rBox.EndPoint = e.Location;
-                
-                //tsStatus.Text = $"MouseUp ({mouseDown.X} , {mouseDown.Y}) -> ({mouseUp.X} , {mouseUp.Y})";
+
 
                 rBox = new RectangleBox();
-                
+
                 if (rect.Width > 0 && rect.Height > 0)
                 {
                     tsProgress.Style = ProgressBarStyle.Marquee;
                     tsProgress.MarqueeAnimationSpeed = 30;
-                    tsStatus.Text = "Capturing text please wait";
+                    tsStatusPrimary.Text = "Capturing text please wait";
                     pbeImage.Invalidate();
-                    backgroundWorker.RunWorkerAsync(); 
-                }                
+                    //bw_OCR_Selection.RunWorkerAsync(); 
+                }
             }
         }
         private void PbeImage_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
-            {                
-                rBox.EndPoint=e.Location;
+            {
+                rBox.EndPoint = e.Location;
                 //tsStatus.Text = $"MouseMove ({mouseDown.X} , {mouseDown.Y}) -> ({mouseUp.X} , {mouseUp.Y})";
                 pbeImage.Invalidate();
             }
@@ -387,7 +568,7 @@ namespace MainApp
                     rtbAbstract.ContextMenu = contextMenu;
                 }
             }
-        }        
+        }
         private void TcTagArea_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (tcTagArea.SelectedTab.Name == "tpAbstract")
@@ -413,7 +594,8 @@ namespace MainApp
 
         private void TsbRestore_Click(object sender, EventArgs e)
         {
-            pbeImage.ImageLocation = currentImage;
+            //pbeImage.ImageLocation = currentImage;
+            PDFReader.setZoomScroll(47, 0, 0);
         }
         private void TsbTopLeft_Click(object sender, EventArgs e)
         {
@@ -434,7 +616,7 @@ namespace MainApp
         private void TsbTopHalf_Click(object sender, EventArgs e)
         {
             ZoomTopHalf();
-        }       
+        }
         private void TsbBottomHalf_Click(object sender, EventArgs e)
         {
             ZoomBottomHalf();
@@ -481,96 +663,131 @@ namespace MainApp
 
         private void MiDone_Click(object sender, EventArgs e)
         {
-            SaveValues(currentItem);
+            SaveValues(objAccession.CurrentItem);
+            objAccession.ProcessedItems.Add(objAccession.CurrentItem);
+            objAccession.UnprocessedItems.Remove(objAccession.CurrentItem);
+            lvItems.Items[objAccession.ProcessedItems.Count - 1].SubItems[5].Text = "Completed";
+            lvItems.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+            if (objAccession.UnprocessedItems.Count == 0)
+            {
+                try
+                {
+                    Directory.Move(objAccession.CurrentDirectory + "\\" + objAccession.Name + "\\OCR_PDF",
+                    Directory.CreateDirectory($"{paths.Folders.Completed_Dir}\\{objAccession.Name}").FullName + "\\OCR_PDF");
+                    Directory.Delete(objAccession.CurrentDirectory + "\\" + objAccession.Name);
+                }
+                catch (Exception ex)
+                {
+                    AddLog("Unable to move/delete OCR folder");
+                    AddLog(ex.Message);
+                }
+            }
+            else
+            {                
+                objAccession.CurrentItem = objAccession.UnprocessedItems.FirstOrDefault();
+                ProcessItem(objAccession);
+            }
         }
 
         #endregion MenuButtonClicks
-
 
         #endregion AllEvents
 
         #region ToolStripButtonMethods
         private void ZoomTopLeft()
         {
-            //Bitmap src = pbeImage.Image as Bitmap;
-            Bitmap src = Image.FromFile(currentImage) as Bitmap;
-            Rectangle cropRect = new Rectangle(0, 0, (src.Width / 2) + 100, (src.Height / 2) + 100);
-            
-            Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
+            //Bitmap src = Image.FromFile(currentImage) as Bitmap;
+            //Rectangle cropRect = new Rectangle(0, 0, (src.Width / 2) + 100, (src.Height / 2) + 100);
 
-            using (Graphics g = Graphics.FromImage(target))
-            {
-                g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height),cropRect, GraphicsUnit.Pixel);
-                pbeImage.Image = target;
-            }
+            //Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
+
+            //using (Graphics g = Graphics.FromImage(target))
+            //{
+            //    g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height),cropRect, GraphicsUnit.Pixel);
+            //    pbeImage.Image = target;
+            //}
+
+            //PDFReader.setViewRect(0, 0, (PDFReader.Width / 2) + 100, (PDFReader.Height / 2) + 100);
+            PDFReader.setZoomScroll(100, 0, 0);
+
         }
         private void ZoomTopRight()
         {
-            Bitmap src = Image.FromFile(currentImage) as Bitmap;
-            Rectangle cropRect = new Rectangle((src.Width / 2) - 100, 0,
-                                                src.Width / 2 + 100, src.Height / 2 + 100);
-            
-            Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
+            //Bitmap src = Image.FromFile(currentImage) as Bitmap;
+            //Rectangle cropRect = new Rectangle((src.Width / 2) - 100, 0,
+            //                                    src.Width / 2 + 100, src.Height / 2 + 100);
 
-            using (Graphics g = Graphics.FromImage(target))
-            {
-                g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height), cropRect, GraphicsUnit.Pixel);
-                pbeImage.Image = target;
-            }
+            //Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
+
+            //using (Graphics g = Graphics.FromImage(target))
+            //{
+            //    g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height), cropRect, GraphicsUnit.Pixel);
+            //    pbeImage.Image = target;
+            //}
+            //PDFReader.setViewRect((PDFReader.Width / 2) - 100, 0, PDFReader.Width / 2 + 100, PDFReader.Height / 2 + 100);
+            PDFReader.setZoomScroll(100, (PDFReader.Width / 2) - 100, 0);
         }
         private void ZoomBottomLeft()
         {
-            Bitmap src = Image.FromFile(currentImage) as Bitmap;
-            Rectangle cropRect = new Rectangle(0, (src.Height / 2) - 100,
-                                                src.Width / 2 + 100, src.Height / 2 + 100);
+            //Bitmap src = Image.FromFile(currentImage) as Bitmap;
+            //Rectangle cropRect = new Rectangle(0, (src.Height / 2) - 100,
+            //                                    src.Width / 2 + 100, src.Height / 2 + 100);
 
-            Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
+            //Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
 
-            using (Graphics g = Graphics.FromImage(target))
-            {
-                g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height), cropRect, GraphicsUnit.Pixel);
-                pbeImage.Image = target;
-            }
+            //using (Graphics g = Graphics.FromImage(target))
+            //{
+            //    g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height), cropRect, GraphicsUnit.Pixel);
+            //    pbeImage.Image = target;
+            //}
+            //PDFReader.setViewRect(0, (PDFReader.Height / 2) - 100, PDFReader.Width / 2 + 100, PDFReader.Height / 2 + 100);
+            PDFReader.setZoomScroll(100, 0, (PDFReader.Height / 2 + 200));
         }
         private void ZoomBottomRight()
         {
-            Bitmap src = Image.FromFile(currentImage) as Bitmap;
-            Rectangle cropRect = new Rectangle(src.Width / 2 - 100, src.Height / 2 - 100,
-                                                src.Width / 2 + 100, src.Height / 2 + 100);
+            //Bitmap src = Image.FromFile(currentImage) as Bitmap;
+            //Rectangle cropRect = new Rectangle(src.Width / 2 - 100, src.Height / 2 - 100,
+            //                                    src.Width / 2 + 100, src.Height / 2 + 100);
 
-            Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
+            //Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
 
-            using (Graphics g = Graphics.FromImage(target))
-            {
-                g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height), cropRect, GraphicsUnit.Pixel);
-                pbeImage.Image = target;
-            }
+            //using (Graphics g = Graphics.FromImage(target))
+            //{
+            //    g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height), cropRect, GraphicsUnit.Pixel);
+            //    pbeImage.Image = target;
+            //}
+            //PDFReader.setViewRect(PDFReader.Width / 2 - 100, PDFReader.Height / 2 - 100, PDFReader.Width / 2 + 100, PDFReader.Height / 2 + 100);
+            PDFReader.setZoomScroll(100, PDFReader.Width / 2, PDFReader.Height / 2 + 200);
         }
         private void ZoomTopHalf()
         {
-            Bitmap src = Image.FromFile(currentImage) as Bitmap;
-            Rectangle cropRect = new Rectangle(0, 0, src.Width, src.Height / 2 + 100);
+            //Bitmap src = Image.FromFile(currentImage) as Bitmap;
+            //Rectangle cropRect = new Rectangle(0, 0, src.Width, src.Height / 2 + 100);
 
-            Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
+            //Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
 
-            using (Graphics g = Graphics.FromImage(target))
-            {
-                g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height),cropRect, GraphicsUnit.Pixel);
-                pbeImage.Image = target;
-            }
+            //using (Graphics g = Graphics.FromImage(target))
+            //{
+            //    g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height),cropRect, GraphicsUnit.Pixel);
+            //    pbeImage.Image = target;
+            //}
+            //PDFReader.setViewRect(0, 0, PDFReader.Width, PDFReader.Height / 2 + 100);
+            PDFReader.setZoomScroll(70, 0, 0);
         }
         private void ZoomBottomHalf()
         {
-            Bitmap src = Image.FromFile(currentImage) as Bitmap;
-            Rectangle cropRect = new Rectangle(0, src.Height / 2 - 100, src.Width, src.Height / 2 + 100);
+            //Bitmap src = Image.FromFile(currentImage) as Bitmap;
+            //Rectangle cropRect = new Rectangle(0, src.Height / 2 - 100, src.Width, src.Height / 2 + 100);
 
-            Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
+            //Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
 
-            using (Graphics g = Graphics.FromImage(target))
-            {
-                g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height), cropRect, GraphicsUnit.Pixel);
-                pbeImage.Image = target;
-            }
+            //using (Graphics g = Graphics.FromImage(target))
+            //{
+            //    g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height), cropRect, GraphicsUnit.Pixel);
+            //    pbeImage.Image = target;
+            //}
+            //PDFReader.setViewRect(0, PDFReader.Height / 2 - 100, PDFReader.Width, PDFReader.Height / 2 + 100);
+            PDFReader.setZoomScroll(70, 0, PDFReader.Height / 2 + 200);
         }
 
         #endregion ToolStripButtonMethods
@@ -590,23 +807,23 @@ namespace MainApp
         {
             _lastFocusedControl = (Control)sender;
         }
-        private void LoadImage(string itemName,int seq)
+        private void LoadImage(string itemName, int seq)
         {
             AddLog($"Loading image {itemName}_{seq}.TIF");
             currentImage = $"{paths.Folders.Input_Dir}\\{itemName}\\{itemName}_{seq}.TIF";
             pbeImage.ImageLocation = currentImage;
         }
-        private void BwRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void BwOSCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             AddLog("Called");
             tsProgress.Style = ProgressBarStyle.Continuous;
             tsProgress.MarqueeAnimationSpeed = 0;
-            tsStatus.Text = "Ready";
+            tsStatusPrimary.Text = "Ready";
         }
         //[System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
         //[System.Runtime.CompilerServices.CallerLineNumber]  int sourceLineNumber = 0 )
         public void AddLog(string log, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
-        {            
+        {
             sbLog.AppendLine($"{DateTime.Now.ToString()} : {memberName} : {log} ;");
         }
         private void AdjustWindow()
@@ -620,33 +837,35 @@ namespace MainApp
         public string[] ReadAllLines(String path)
         {
             AddLog("Called");
+            List<string> file = new List<string>();
             using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            using (StreamReader streamReader = new StreamReader(fileStream))
             {
-                List<string> file = new List<string>();
-                while (!streamReader.EndOfStream)
+                using (StreamReader streamReader = new StreamReader(fileStream))
                 {
-                    file.Add(streamReader.ReadLine());
+                    while (!streamReader.EndOfStream)
+                    {
+                        file.Add(streamReader.ReadLine());
+                    }
                 }
-                return file.ToArray();
             }
+            return file.ToArray();
         }
-        private void SetText(string strText)
-        {
-            AddLog("Called");
-            if (ctlTextBox.InvokeRequired)
-            {
-                SetTextCallback setTextCallback = new SetTextCallback(SetText);
-                this.Invoke(setTextCallback, new object[] { strText });
-                AddLog("Invoked");
-            }
-            else
-            {
-                ctlTextBox.Text = strText;
-            }
-        }
+        //private void SetText(string strText)
+        //{
+        //    AddLog("Called");
+        //    if (ctlTextBox.InvokeRequired)
+        //    {
+        //        SetTextCallback setTextCallback = new SetTextCallback(SetText);
+        //        this.Invoke(setTextCallback, new object[] { strText });
+        //        AddLog("Invoked");
+        //    }
+        //    else
+        //    {
+        //        ctlTextBox.Text = strText;
+        //    }
+        //}
         private void SetTextBoxEnterEvents(Control control)
-        {            
+        {
             if ((control is TextBox) || (control is RichTextBox))
             {
                 control.Enter += new EventHandler(TextBoxEnter);
@@ -660,107 +879,113 @@ namespace MainApp
                 }
             }
         }
-        private void ProcessXML(string ItemName)
+        private void ProcessXML(string Accession, string Item)
         {
             AddLog("Called");
-            
+
             serializeIssue = new SerializeDeserialize<ISSUE>();
 
-            string currentXML = $"{paths.Folders.Input_Dir}\\{ItemName}\\{ItemName}.XML";
+            string currentXML = $"{Accession}\\{Item}\\{Item}.XML";
 
-            XmlDocument xmldocument = new XmlDocument();
+            currentItem = Item;
 
-            xmldocument.Load(currentXML);
+            XmlDocument xmldoc = new XmlDocument();
+
+            xmldoc.Load(currentXML);
 
             AddLog("Deserializing");
-            deserializedIssues = serializeIssue.DeserializeData(xmldocument.OuterXml);
-            
-            ListViewItem listViewItem = new ListViewItem("1");
-            listViewItem.SubItems.AddRange(new string[]
-            {
-                deserializedIssues.ID_ACCESSION, deserializedIssues.ITEM[0].ITEMNO,
-                "A", deserializedIssues.ITEM[0].ITEM_CONTENT.DT_DOCUMENTTYPE.ToString(), "Progress", deserializedIssues.ITEM[0].ITEM_CONTENT.PG_PAGESPAN
-            });
-            lvItems.Items.Add(listViewItem);
+            deserializedIssues = serializeIssue.DeserializeData(xmldoc.OuterXml);
 
             LoadValues(deserializedIssues);
 
-            LoadImage(ItemName, Convert.ToInt32(deserializedIssues.ITEM[0].ITEM_CONTENT.PG_PAGESPAN.Split('-')[0]));
-
-            
-            //AddLog("Serializing");
-            //string serializedIssues = serializeIssue.SerializeData(deserializedIssues);
-
-            //Directory.CreateDirectory($"{paths.Folders.Output_Dir}\\{ItemName}\\");
-
-            //xmldocument.LoadXml(serializedIssues);
-
-            //using (StreamWriter streamWriter = new StreamWriter($"{paths.Folders.Output_Dir}\\{ItemName}\\{ItemName}.XML", false, Encoding.UTF8))
-            //{
-            //    AddLog($"Saving {((FileStream)streamWriter.BaseStream).Name}");
-            //    //streamWriter.Write(serializedIssues);             //For UTF-16 encoding
-            //    xmldocument.Save(streamWriter);                     //For UTF-8 encoding
-            //}
+            LoadPDF(Accession, Item);
 
         }
         private void LoadValues(ISSUE issue)
         {
-            txtTitleTitle.Text = issue.ITEM[0].ITEM_CONTENT.TITLES.TI_TITLE;
+            #region TITLE           
 
-            txtTitleILang.Text = issue.ITEM[0].ITEM_CONTENT.LA_LANGUAGE[0].Value.ToString();
+            try
+            {
+                txtTitleTitle.Text = issue.ITEM[0].ITEM_CONTENT.TITLES.TI_TITLE.Data;
+            }
+            catch
+            {
+                txtTitleTitle.Clear();
+            }
 
-            txtTitlePRange.Text = issue.ITEM[0].ITEM_CONTENT.PG_PAGESPAN;
+            if (issue.ITEM[0].ITEM_CONTENT.AI_ARTICLEIDENTIFIER != null)
+            {
+                foreach (AI_ARTICLEIDENTIFIER aid in issue.ITEM[0].ITEM_CONTENT.AI_ARTICLEIDENTIFIER)
+                {
+                    Controls.Find($"txtTitleID{aid.seq}", true)[0].Text = aid.Value.Data;
+                    Controls.Find($"cmbTitleIDType{aid.seq}", true)[0].Text = aid.type.ToString();
+                }
+            }
 
+            try
+            {
+                txtTitleILang.Text = issue.ITEM[0].ITEM_CONTENT.LA_LANGUAGE[0].Value.ToString();
+            }
+            catch
+            {
+                txtTitleILang.Clear();
+            }
+
+            try
+            {
+                txtTitlePRange.Text = issue.ITEM[0].ITEM_CONTENT.PG_PAGESPAN;
+            }
+            catch
+            {
+                txtTitlePRange.Clear();
+            }
+
+            #endregion TITLE
+
+            #region KEYWORDS
             txtKeywords.Clear();
             StringBuilder stringBuilder = new StringBuilder();
             if (issue.ITEM[0].ITEM_CONTENT.KEYWORD != null)
             {
                 foreach (KEYWORD keyword in issue.ITEM[0].ITEM_CONTENT.KEYWORD)
                 {
-                    stringBuilder.AppendLine(keyword.AUTHOR_KEYWORD);
+                    stringBuilder.AppendLine(keyword.AUTHOR_KEYWORD.Data);
                 }
-            }                
+            }
             txtKeywords.Text = stringBuilder.ToString();
+            #endregion KEYWORDS
 
-            if(issue.ITEM[0].ITEM_CONTENT.AI_ARTICLEIDENTIFIER != null)
+            #region ABSTRACT
+
+            try
             {
-                foreach (AI_ARTICLEIDENTIFIER aid in issue.ITEM[0].ITEM_CONTENT.AI_ARTICLEIDENTIFIER)
-                {
-                    Controls.Find($"txtTitleID{aid.seq}", true)[0].Text = aid.Value;
-                    Controls.Find($"cmbTitleIDType{aid.seq}", true)[0].Text = aid.type.ToString();
-                }
-            }            
+                rtbAbstract.Text = issue.ITEM[0].ITEM_CONTENT.ABSTRACT[0].Value; ;//.Data;                
+            }
+            catch
+            {
+                rtbAbstract.Clear();
+            }
 
-            rtbAbstract.Clear();
-            rtbAbstract.Text = issue.ITEM[0].ITEM_CONTENT.ABSTRACT[0].Value;
+            #endregion ABSTRACT
         }
         private void SaveValues(string item)
         {
             XmlDocument xmldocument = new XmlDocument();
 
-            deserializedIssues.ITEM[0].ITEM_CONTENT.TITLES.TI_TITLE = txtTitleTitle.Text;
-
-            if (Enum.TryParse(txtTitleILang.Text, out LANGUAGE language))
+            #region TITLE       
+            if (deserializedIssues.ITEM[0].ITEM_CONTENT.TITLES == null)
             {
-                deserializedIssues.ITEM[0].ITEM_CONTENT.LA_LANGUAGE[0].Value = language;
+                deserializedIssues.ITEM[0].ITEM_CONTENT.TITLES = new TITLES();
             }
-
-            deserializedIssues.ITEM[0].ITEM_CONTENT.PG_PAGESPAN = txtTitlePRange.Text;
-
-            var arrKwd = txtKeywords.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-
-            deserializedIssues.ITEM[0].ITEM_CONTENT.KEYWORD = new KEYWORD[arrKwd.Length];
-            for (int i = 0; i < arrKwd.Length; i++)
+            try
             {
-                deserializedIssues.ITEM[0].ITEM_CONTENT.KEYWORD[i] = new KEYWORD
-                {
-                    seq = $"{i + 1}",
-                    AUTHOR_KEYWORD = arrKwd[i]
-                };
+                deserializedIssues.ITEM[0].ITEM_CONTENT.TITLES.TI_TITLE = xmldocument.CreateCDataSection(FormatText(txtTitleTitle.Text));
             }
+            catch (Exception e) { Console.WriteLine(e.Message); }
 
             List<AI_ARTICLEIDENTIFIER> alAID = new List<AI_ARTICLEIDENTIFIER>();
-            for (int i = 1, j=1; i <= 4; i++)
+            for (int i = 1, j = 1; i <= 4; i++)
             {
                 if (!string.IsNullOrEmpty(Controls.Find($"txtTitleID{i}", true)[0].Text))
                 {
@@ -768,41 +993,221 @@ namespace MainApp
                     {
                         if (Enum.TryParse(Controls.Find($"cmbTitleIDType{i}", true)[0].Text, out IDENTIFIER_TYPE idType))
                         {
-                            AI_ARTICLEIDENTIFIER aid = new AI_ARTICLEIDENTIFIER();
-                            aid.seq = j.ToString();
-                            aid.type = idType;
-                            aid.Value = Controls.Find($"txtTitleID{i}", true)[0].Text;
+                            AI_ARTICLEIDENTIFIER aid = new AI_ARTICLEIDENTIFIER
+                            {
+                                seq = j.ToString(),
+                                type = idType,
+                                Value = xmldocument.CreateCDataSection(Controls.Find($"txtTitleID{i}", true)[0].Text.Trim())
+                            };
                             alAID.Add(aid);
                             j++;
                         }
                     }
                 }
-            } 
+            }
             deserializedIssues.ITEM[0].ITEM_CONTENT.AI_ARTICLEIDENTIFIER = new AI_ARTICLEIDENTIFIER[alAID.Count];
             deserializedIssues.ITEM[0].ITEM_CONTENT.AI_ARTICLEIDENTIFIER = alAID.ToArray();
 
+            if (Enum.TryParse(txtTitleILang.Text.Trim(), out LANGUAGE language))
+            {
+                if (deserializedIssues.ITEM[0].ITEM_CONTENT.LA_LANGUAGE == null)
+                {
+                    deserializedIssues.ITEM[0].ITEM_CONTENT.LA_LANGUAGE = new LA_LANGUAGE[1];
+                    deserializedIssues.ITEM[0].ITEM_CONTENT.LA_LANGUAGE[0] = new LA_LANGUAGE();
+                }
+                deserializedIssues.ITEM[0].ITEM_CONTENT.LA_LANGUAGE[0].Value = language;
+                deserializedIssues.ITEM[0].ITEM_CONTENT.LA_LANGUAGE[0].seq = "1";
+            }
 
-            deserializedIssues.ITEM[0].ITEM_CONTENT.ABSTRACT[0].Value = rtbAbstract.Text;
+            deserializedIssues.ITEM[0].ITEM_CONTENT.PG_PAGESPAN = txtTitlePRange.Text.Trim();
+            #endregion TITLE
 
+            #region KEYWORDS
+            var arrKwd = txtKeywords.Text.Trim().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+            deserializedIssues.ITEM[0].ITEM_CONTENT.KEYWORD = new KEYWORD[arrKwd.Length];
+            for (int i = 0; i < arrKwd.Length; i++)
+            {
+                deserializedIssues.ITEM[0].ITEM_CONTENT.KEYWORD[i] = new KEYWORD
+                {
+                    seq = $"{i + 1}",
+                    AUTHOR_KEYWORD = xmldocument.CreateCDataSection(arrKwd[i].Trim())
+                };
+            }
+            #endregion KEYWORDS
+
+            #region ABSTRACT
+            if (deserializedIssues.ITEM[0].ITEM_CONTENT.ABSTRACT == null)
+            {
+                deserializedIssues.ITEM[0].ITEM_CONTENT.ABSTRACT = new ABSTRACT[1];
+                deserializedIssues.ITEM[0].ITEM_CONTENT.ABSTRACT[0] = new ABSTRACT();
+            }
+            //deserializedIssues.ITEM[0].ITEM_CONTENT.ABSTRACT[0].Value = xmldocument.CreateCDataSection(rtbAbstract.Text.Replace("\n", " ").Trim());
+            deserializedIssues.ITEM[0].ITEM_CONTENT.ABSTRACT[0].Value = xmldocument.CreateCDataSection(FormatText(rtbAbstract.Text).Trim()).OuterXml;
+            deserializedIssues.ITEM[0].ITEM_CONTENT.ABSTRACT[0].seq = "1";
+            #endregion ABSTRACT
+
+            #region SAVE
             serializeIssue = new SerializeDeserialize<ISSUE>();
 
             string serializedIssues = serializeIssue.SerializeData(deserializedIssues);
 
-            Directory.CreateDirectory($"{paths.Folders.Output_Dir}\\{item}\\");  
-
-            xmldocument.LoadXml(serializedIssues);   
-
-            using (StreamWriter streamWriter = new StreamWriter($"{paths.Folders.Output_Dir}\\{item}\\{item}.XML", false, Encoding.UTF8))
+            try
             {
-                AddLog($"Saving {((FileStream)streamWriter.BaseStream).Name}");
-                //streamWriter.Write(serializedIssues);             //For UTF-16 encoding
-                xmldocument.Save(streamWriter);                     //For UTF-8 encoding
+                string outDir = $"{Directory.CreateDirectory($"{ paths.Folders.Output_Dir}\\{objAccession.Name}\\{item}").FullName}";
+                xmldocument.LoadXml(System.Net.WebUtility.HtmlDecode(serializedIssues));
+                using (StreamWriter streamWriter = new StreamWriter($"{outDir}\\{item}.XML", false, Encoding.UTF8))
+                {
+                    AddLog($"Saving {((FileStream)streamWriter.BaseStream).Name}");
+                    xmldocument.Save(streamWriter);                     //For UTF-8 encoding
+                }
+                try
+                {
+                    MoveTiffs(objAccession.CurrentDirectory + "\\" + objAccession.Name + "\\" + item,
+                        $"{Directory.CreateDirectory($"{ paths.Folders.Output_Dir}\\{objAccession.Name}\\{item}").FullName}", item);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                }
+
+                try
+                {
+                    MoveCurrentItemDir(objAccession.CurrentDirectory + "\\" + objAccession.Name + "\\" + item,
+                                        Directory.CreateDirectory($"{paths.Folders.Completed_Dir}\\{objAccession.Name}").FullName + "\\" + item);
+                }
+                catch (Exception)
+                {
+                    AddLog($"Unable to move {objAccession.CurrentDirectory + "\\" + objAccession.Name + "\\" + item }");
+                }
+                MessageBox.Show("Saved");
             }
-            MessageBox.Show("Saved");
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+
+            #endregion SAVE
+        }
+        private void MoveCurrentItemDir(string srcDir, string destDir)
+        {
+            Directory.Move(srcDir, destDir);
+        }
+        private void MoveTiffs(string fromDir, string toDir, string itemName)
+        {
+            if (!Directory.Exists(fromDir))
+            {
+                AddLog($"{fromDir} does not Exist. Unable to move images.");
+                return;
+            }
+            if (!Directory.Exists(toDir))
+            {
+                try
+                {
+                    Directory.CreateDirectory(toDir);
+                }
+                catch (Exception)
+                {
+                    AddLog($"Unable to create {toDir}.");
+                    return;
+                }
+            }
+            foreach (string tif in Directory.GetFiles(fromDir, itemName + "*.TIF"))
+            {
+                try
+                {
+                    File.Move(tif, toDir + "\\" + Path.GetFileName(tif));
+                }
+                catch (Exception e)
+                {
+                    AddLog($"Unable to move file {tif}.");
+                    AddLog(e.Message);
+                }
+            }
+        }
+        private string FormatText(string text)
+        {
+            string newText = text;
+
+            if (newText.Contains(Environment.NewLine))
+            {
+                newText = newText.Replace(Environment.NewLine, " ");
+            }
+            if (newText.Contains("\n"))
+            {
+                newText = newText.Replace("\n", " ");
+            }
+            if (newText.Contains("—"))
+            {
+                newText = newText.Replace("—", "-");
+            }
+            return newText.Trim();
+        }
+        public void TesseractPDF(string file)
+        {
+            if (!File.Exists(file))
+            {
+                AddLog($"File not found - {file}");
+                return;
+            }
+
+            try
+            {
+                using (var engine = new TesseractEngine(paths.Folders.Ocrdata_Dir, "eng", EngineMode.Default))
+                {
+                    using (var img = Pix.LoadFromFile(file))
+                    {
+                        using (var page = engine.Process(img))
+                        {
+                            var text = page.GetText();
+                            var horc = page.GetHOCRText(1);
+                            var path = Directory.CreateDirectory(Path.GetDirectoryName(file) + "\\OCR_PDF").FullName + "\\" + Path.GetFileNameWithoutExtension(file);
+
+                            using (var renderer = ResultRenderer.CreatePdfRenderer(path, paths.Folders.Ocrdata_Dir))
+                            {
+                                using (renderer.BeginDocument(path + ".pdf"))
+                                {
+                                    renderer.AddPage(page);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError(e.ToString());
+                Console.WriteLine("Unexpected Error: " + e.Message);
+                Console.WriteLine("Details: ");
+                Console.WriteLine(e.ToString());
+            }
+        }
+        public static void BeginControlUpdate(Control control)
+        {
+            Message msgSuspendUpdate = Message.Create(control.Handle, WM_SETREDRAW, IntPtr.Zero,
+                  IntPtr.Zero);
+
+            NativeWindow window = NativeWindow.FromHandle(control.Handle);
+            window.DefWndProc(ref msgSuspendUpdate);
+        }
+        public static void EndControlUpdate(Control control)
+        {
+            // Create a C "true" boolean as an IntPtr
+            IntPtr wparam = new IntPtr(1);
+            Message msgResumeUpdate = Message.Create(control.Handle, WM_SETREDRAW, wparam,
+                  IntPtr.Zero);
+
+            NativeWindow window = NativeWindow.FromHandle(control.Handle);
+            window.DefWndProc(ref msgResumeUpdate);
+            control.Invalidate();
+            control.Refresh();
+        }
+        private void LoadPDF(string dir, string fName)
+        {
+            //PDFReader.LoadFile($"{paths.Folders.Input_Dir}\\{itemName}\\OCR_PDF\\{itemName}_{page}.pdf");
+            PDFReader.LoadFile($"{dir}\\OCR_PDF\\{fName}.pdf");
         }
 
-        #endregion CommonMethods           
-
-        
+        #endregion CommonMethods
     }
 }

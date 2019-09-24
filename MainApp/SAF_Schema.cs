@@ -8,6 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Xml;
 using System.Xml.Serialization;
 
 /// <remarks/>
@@ -141,7 +142,7 @@ public partial class ITEM_CONTENT {
     
     private CI_CITATION[] cI_CITATIONField;
     
-    private ABSTRACT1[] aBSTRACTField;
+    private ABSTRACT[] aBSTRACTField;
     
     private BIOSIS_DATA bIOSIS_DATAField;
     
@@ -232,8 +233,8 @@ public partial class ITEM_CONTENT {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlElementAttribute("ABSTRACT")]
-    public ABSTRACT1[] ABSTRACT {
+    [System.Xml.Serialization.XmlElementAttribute( "ABSTRACT", IsNullable =true)]
+    public ABSTRACT[] ABSTRACT {
         get {
             return this.aBSTRACTField;
         }
@@ -805,20 +806,17 @@ public enum LANGUAGE {
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
 public partial class KEYWORD {
     
-    private string aUTHOR_KEYWORDField;
-    
-    private string seqField;
-    
+    private XmlCDataSection aUTHOR_KEYWORDField;    
+    private string seqField;    
     /// <remarks/>
-    public string AUTHOR_KEYWORD {
+    public XmlCDataSection AUTHOR_KEYWORD {
         get {
             return this.aUTHOR_KEYWORDField;
         }
         set {
             this.aUTHOR_KEYWORDField = value;
         }
-    }
-    
+    }    
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute(DataType="positiveInteger")]
     public string seq {
@@ -839,12 +837,12 @@ public partial class KEYWORD {
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
 public partial class TITLES {
     
-    private string tI_TITLEField;
+    private XmlCDataSection tI_TITLEField;
     
-    private string eT_ENHANCEDTITLEField;
+    private XmlCDataSection eT_ENHANCEDTITLEField;
     
     /// <remarks/>
-    public string TI_TITLE {
+    public XmlCDataSection TI_TITLE {
         get {
             return this.tI_TITLEField;
         }
@@ -854,7 +852,7 @@ public partial class TITLES {
     }
     
     /// <remarks/>
-    public string ET_ENHANCEDTITLE {
+    public XmlCDataSection ET_ENHANCEDTITLE {
         get {
             return this.eT_ENHANCEDTITLEField;
         }
@@ -876,7 +874,7 @@ public partial class AI_ARTICLEIDENTIFIER {
     
     private IDENTIFIER_TYPE typeField;
     
-    private string valueField;
+    private XmlCDataSection valueField;
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute(DataType="positiveInteger")]
@@ -901,8 +899,8 @@ public partial class AI_ARTICLEIDENTIFIER {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlTextAttribute()]
-    public string Value {
+    [System.Xml.Serialization.XmlElementAttribute(IsNullable =true)]
+    public XmlCDataSection Value {
         get {
             return this.valueField;
         }
@@ -1046,7 +1044,7 @@ public partial class CI_JOURNAL {
     
     private string cI_YEARField;
     
-    private string cI_TITLEField;
+    private XmlCDataSection cI_TITLEField;
     
     private CI_IMPLICITINDICATOR cI_IMPLICITINDICATORField;
     
@@ -1097,7 +1095,7 @@ public partial class CI_JOURNAL {
     }
     
     /// <remarks/>
-    public string CI_TITLE {
+    public XmlCDataSection CI_TITLE {
         get {
             return this.cI_TITLEField;
         }
@@ -1295,7 +1293,7 @@ public enum CI_CITATIONType {
 [System.Diagnostics.DebuggerStepThroughAttribute()]
 [System.ComponentModel.DesignerCategoryAttribute("code")]
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
-public partial class ABSTRACT1 {
+public partial class ABSTRACT {
     
     private string seqField;
     
@@ -1313,7 +1311,7 @@ public partial class ABSTRACT1 {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlTextAttribute()]
+    [System.Xml.Serialization.XmlText]
     public string Value {
         get {
             return this.valueField;
@@ -1334,7 +1332,7 @@ public partial class BIOSIS_DATA {
     
     private BIOSIS_FOREIGN_TITLE[] bIOSIS_FOREIGN_TITLEField;
     
-    private string bIOSIS_URLField;
+    private XmlCDataSection bIOSIS_URLField;
     
     /// <remarks/>
     [System.Xml.Serialization.XmlElementAttribute("BIOSIS_FOREIGN_TITLE")]
@@ -1348,7 +1346,7 @@ public partial class BIOSIS_DATA {
     }
     
     /// <remarks/>
-    public string BIOSIS_URL {
+    public XmlCDataSection BIOSIS_URL {
         get {
             return this.bIOSIS_URLField;
         }
@@ -1368,7 +1366,7 @@ public partial class BIOSIS_FOREIGN_TITLE {
     
     private string seqField;
     
-    private string valueField;
+    private XmlCDataSection valueField;
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute(DataType="positiveInteger")]
@@ -1382,8 +1380,8 @@ public partial class BIOSIS_FOREIGN_TITLE {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlTextAttribute()]
-    public string Value {
+    [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
+    public XmlCDataSection Value {
         get {
             return this.valueField;
         }
@@ -1451,7 +1449,7 @@ public partial class FUNDING_TEXT {
     
     private string seqField;
     
-    private string valueField;
+    private XmlCDataSection valueField;
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute(DataType="positiveInteger")]
@@ -1465,8 +1463,8 @@ public partial class FUNDING_TEXT {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlTextAttribute()]
-    public string Value {
+    [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
+    public XmlCDataSection Value {
         get {
             return this.valueField;
         }
@@ -1486,7 +1484,7 @@ public partial class FUNDING_GRANT_NO {
     
     private string seqField;
     
-    private string valueField;
+    private XmlCDataSection valueField;
     
     /// <remarks/>
     [System.Xml.Serialization.XmlAttributeAttribute(DataType="positiveInteger")]
@@ -1500,8 +1498,8 @@ public partial class FUNDING_GRANT_NO {
     }
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlTextAttribute()]
-    public string Value {
+    [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
+    public XmlCDataSection Value {
         get {
             return this.valueField;
         }
@@ -1566,11 +1564,11 @@ public partial class FUNDING_ACKNOWLEDGEMENTFUNDING_ORG_GROUP {
 [System.Xml.Serialization.XmlTypeAttribute(AnonymousType=true)]
 public partial class FUNDING_ORG_NAME {
     
-    private string valueField;
+    private XmlCDataSection valueField;
     
     /// <remarks/>
-    [System.Xml.Serialization.XmlTextAttribute()]
-    public string Value {
+    [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
+    public XmlCDataSection Value {
         get {
             return this.valueField;
         }

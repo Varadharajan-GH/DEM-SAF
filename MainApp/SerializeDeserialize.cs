@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -6,7 +7,7 @@ using System.Xml.Serialization;
 namespace CustomSerilization
 {
     public class SerializeDeserialize<T>
-    {
+    { 
         StringBuilder sbData;
         StringWriter swWriter;
         XmlDocument xDoc;
@@ -49,5 +50,6 @@ namespace CustomSerilization
 
             return deserializedT;
         }
+
     }
 }

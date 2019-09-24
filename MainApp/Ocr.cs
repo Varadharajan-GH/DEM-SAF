@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace NuGet.Tessnet2.src
 {
-    public class Ocr
+    public class Ocr 
     {
         ManualResetEvent _mEvent;
         private readonly string _tessdataPath;
@@ -48,7 +48,7 @@ namespace NuGet.Tessnet2.src
         static void OcrProgressEvent(int percent)
         {
             Console.WriteLine("{0}% progression", percent);
-        }
+        }        
 
         public Ocr(string tessdataPath)
         {
