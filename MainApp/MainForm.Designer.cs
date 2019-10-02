@@ -61,7 +61,7 @@
             this.scTitle = new System.Windows.Forms.SplitContainer();
             this.panelTitleTitles = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.txtTitleTitle = new System.Windows.Forms.TextBox();
+            this.rtbTitleTitle = new System.Windows.Forms.RichTextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.txtTitleFTitle = new System.Windows.Forms.TextBox();
             this.panelTitleFields = new System.Windows.Forms.Panel();
@@ -75,6 +75,7 @@
             this.txtTitleID2 = new System.Windows.Forms.TextBox();
             this.txtTitleID1 = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.cmbTitleLang = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtTitlePRange = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -84,10 +85,9 @@
             this.label4 = new System.Windows.Forms.Label();
             this.txtTitleMAbs = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtTitleILang = new System.Windows.Forms.TextBox();
             this.tpKeywords = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.txtKeywords = new System.Windows.Forms.TextBox();
+            this.rtbKeywords = new System.Windows.Forms.RichTextBox();
             this.tpAbstract = new System.Windows.Forms.TabPage();
             this.rtbAbstract = new System.Windows.Forms.RichTextBox();
             this.tpReference = new System.Windows.Forms.TabPage();
@@ -140,7 +140,7 @@
             this.tsbSpellCheck = new System.Windows.Forms.ToolStripButton();
             this.tsbSwitchPage = new System.Windows.Forms.ToolStripButton();
             this.tsbArrangeKW = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton11 = new System.Windows.Forms.ToolStripButton();
+            this.tsbInsertSymbol = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton12 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton13 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton14 = new System.Windows.Forms.ToolStripButton();
@@ -148,12 +148,13 @@
             this.toolStripButton16 = new System.Windows.Forms.ToolStripButton();
             this.tsbUndo = new System.Windows.Forms.ToolStripButton();
             this.panelImage = new System.Windows.Forms.Panel();
-            this.PDFReader = new AxAcroPDFLib.AxAcroPDF();
             this.pbeImage = new bambit.forms.controls.PictureBoxExtended();
+            this.PDFReader = new AxAcroPDFLib.AxAcroPDF();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.tsProgress = new System.Windows.Forms.ToolStripProgressBar();
-            this.tsStatusPrimary = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tsStatusSecondary = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tsProgress1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.tsStatus1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tsProgress2 = new System.Windows.Forms.ToolStripProgressBar();
+            this.tsStatus2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -193,8 +194,8 @@
             this.panelRefTop.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.panelImage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.PDFReader)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbeImage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PDFReader)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.panelMain.SuspendLayout();
             this.SuspendLayout();
@@ -487,38 +488,35 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.txtTitleTitle);
+            this.groupBox1.Controls.Add(this.rtbTitleTitle);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox1.Size = new System.Drawing.Size(515, 70);
+            this.groupBox1.Size = new System.Drawing.Size(515, 104);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Title";
             // 
-            // txtTitleTitle
+            // rtbTitleTitle
             // 
-            this.txtTitleTitle.AllowDrop = true;
-            this.txtTitleTitle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtTitleTitle.Location = new System.Drawing.Point(4, 20);
-            this.txtTitleTitle.Margin = new System.Windows.Forms.Padding(4);
-            this.txtTitleTitle.Multiline = true;
-            this.txtTitleTitle.Name = "txtTitleTitle";
-            this.txtTitleTitle.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtTitleTitle.Size = new System.Drawing.Size(507, 46);
-            this.txtTitleTitle.TabIndex = 0;
+            this.rtbTitleTitle.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtbTitleTitle.Location = new System.Drawing.Point(4, 20);
+            this.rtbTitleTitle.Name = "rtbTitleTitle";
+            this.rtbTitleTitle.Size = new System.Drawing.Size(507, 80);
+            this.rtbTitleTitle.TabIndex = 0;
+            this.rtbTitleTitle.Text = "";
             // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.txtTitleFTitle);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.groupBox2.Location = new System.Drawing.Point(0, 70);
+            this.groupBox2.Location = new System.Drawing.Point(0, 104);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox2.Size = new System.Drawing.Size(515, 95);
+            this.groupBox2.Size = new System.Drawing.Size(515, 61);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Foreign Title";
@@ -531,7 +529,7 @@
             this.txtTitleFTitle.Multiline = true;
             this.txtTitleFTitle.Name = "txtTitleFTitle";
             this.txtTitleFTitle.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtTitleFTitle.Size = new System.Drawing.Size(507, 71);
+            this.txtTitleFTitle.Size = new System.Drawing.Size(507, 37);
             this.txtTitleFTitle.TabIndex = 0;
             // 
             // panelTitleFields
@@ -655,6 +653,7 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.cmbTitleLang);
             this.groupBox4.Controls.Add(this.label1);
             this.groupBox4.Controls.Add(this.txtTitlePRange);
             this.groupBox4.Controls.Add(this.label5);
@@ -664,7 +663,6 @@
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.Controls.Add(this.txtTitleMAbs);
             this.groupBox4.Controls.Add(this.label3);
-            this.groupBox4.Controls.Add(this.txtTitleILang);
             this.groupBox4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox4.Location = new System.Drawing.Point(0, 105);
             this.groupBox4.Margin = new System.Windows.Forms.Padding(4);
@@ -673,6 +671,14 @@
             this.groupBox4.Size = new System.Drawing.Size(515, 117);
             this.groupBox4.TabIndex = 12;
             this.groupBox4.TabStop = false;
+            // 
+            // cmbTitleLang
+            // 
+            this.cmbTitleLang.FormattingEnabled = true;
+            this.cmbTitleLang.Location = new System.Drawing.Point(131, 13);
+            this.cmbTitleLang.Name = "cmbTitleLang";
+            this.cmbTitleLang.Size = new System.Drawing.Size(205, 24);
+            this.cmbTitleLang.TabIndex = 12;
             // 
             // label1
             // 
@@ -764,17 +770,6 @@
             this.label3.TabIndex = 9;
             this.label3.Text = "URL";
             // 
-            // txtTitleILang
-            // 
-            this.txtTitleILang.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTitleILang.Location = new System.Drawing.Point(131, 14);
-            this.txtTitleILang.Margin = new System.Windows.Forms.Padding(4);
-            this.txtTitleILang.Name = "txtTitleILang";
-            this.txtTitleILang.Size = new System.Drawing.Size(373, 23);
-            this.txtTitleILang.TabIndex = 6;
-            // 
             // tpKeywords
             // 
             this.tpKeywords.Controls.Add(this.groupBox5);
@@ -790,7 +785,7 @@
             // 
             // groupBox5
             // 
-            this.groupBox5.Controls.Add(this.txtKeywords);
+            this.groupBox5.Controls.Add(this.rtbKeywords);
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox5.Location = new System.Drawing.Point(4, 4);
             this.groupBox5.Name = "groupBox5";
@@ -799,15 +794,14 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Author Keywords";
             // 
-            // txtKeywords
+            // rtbKeywords
             // 
-            this.txtKeywords.AllowDrop = true;
-            this.txtKeywords.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtKeywords.Location = new System.Drawing.Point(3, 19);
-            this.txtKeywords.Multiline = true;
-            this.txtKeywords.Name = "txtKeywords";
-            this.txtKeywords.Size = new System.Drawing.Size(513, 380);
-            this.txtKeywords.TabIndex = 0;
+            this.rtbKeywords.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtbKeywords.Location = new System.Drawing.Point(3, 19);
+            this.rtbKeywords.Name = "rtbKeywords";
+            this.rtbKeywords.Size = new System.Drawing.Size(513, 380);
+            this.rtbKeywords.TabIndex = 0;
+            this.rtbKeywords.Text = "";
             // 
             // tpAbstract
             // 
@@ -825,14 +819,11 @@
             // rtbAbstract
             // 
             this.rtbAbstract.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtbAbstract.EnableAutoDragDrop = true;
-            this.rtbAbstract.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtbAbstract.Location = new System.Drawing.Point(4, 4);
             this.rtbAbstract.Name = "rtbAbstract";
             this.rtbAbstract.Size = new System.Drawing.Size(519, 402);
             this.rtbAbstract.TabIndex = 0;
             this.rtbAbstract.Text = "";
-            this.rtbAbstract.MouseDown += new System.Windows.Forms.MouseEventHandler(this.RtbAbstract_MouseDown);
             // 
             // tpReference
             // 
@@ -874,7 +865,7 @@
             this.scRefBottom.Panel2.AutoScroll = true;
             this.scRefBottom.Panel2.Controls.Add(this.pictureBox1);
             this.scRefBottom.Size = new System.Drawing.Size(519, 156);
-            this.scRefBottom.SplitterDistance = 77;
+            this.scRefBottom.SplitterDistance = 76;
             this.scRefBottom.TabIndex = 0;
             // 
             // textBox21
@@ -883,7 +874,7 @@
             this.textBox21.Location = new System.Drawing.Point(0, 0);
             this.textBox21.Multiline = true;
             this.textBox21.Name = "textBox21";
-            this.textBox21.Size = new System.Drawing.Size(519, 77);
+            this.textBox21.Size = new System.Drawing.Size(519, 76);
             this.textBox21.TabIndex = 0;
             // 
             // pictureBox1
@@ -1243,7 +1234,7 @@
             this.tsbSpellCheck,
             this.tsbSwitchPage,
             this.tsbArrangeKW,
-            this.toolStripButton11,
+            this.tsbInsertSymbol,
             this.toolStripButton12,
             this.toolStripButton13,
             this.toolStripButton14,
@@ -1342,7 +1333,7 @@
             this.tsbSpellCheck.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbSpellCheck.Name = "tsbSpellCheck";
             this.tsbSpellCheck.Size = new System.Drawing.Size(28, 19);
-            this.tsbSpellCheck.Text = "SC";
+            this.tsbSpellCheck.Text = "CS";
             this.tsbSpellCheck.ToolTipText = "Check Spelling";
             this.tsbSpellCheck.Click += new System.EventHandler(this.TsbSpellCheck_Click);
             // 
@@ -1368,14 +1359,16 @@
             this.tsbArrangeKW.ToolTipText = "Arrange Keywords";
             this.tsbArrangeKW.Click += new System.EventHandler(this.TsbArrangeKW_Click);
             // 
-            // toolStripButton11
+            // tsbInsertSymbol
             // 
-            this.toolStripButton11.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton11.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton11.Image")));
-            this.toolStripButton11.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton11.Name = "toolStripButton11";
-            this.toolStripButton11.Size = new System.Drawing.Size(28, 20);
-            this.toolStripButton11.Text = "toolStripButton11";
+            this.tsbInsertSymbol.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsbInsertSymbol.Image = ((System.Drawing.Image)(resources.GetObject("tsbInsertSymbol.Image")));
+            this.tsbInsertSymbol.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbInsertSymbol.Name = "tsbInsertSymbol";
+            this.tsbInsertSymbol.Size = new System.Drawing.Size(28, 19);
+            this.tsbInsertSymbol.Text = "IS";
+            this.tsbInsertSymbol.ToolTipText = "Insert Symbol";
+            this.tsbInsertSymbol.Click += new System.EventHandler(this.tsbInsertSymbol_Click);
             // 
             // toolStripButton12
             // 
@@ -1435,8 +1428,8 @@
             // panelImage
             // 
             this.panelImage.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panelImage.Controls.Add(this.PDFReader);
             this.panelImage.Controls.Add(this.pbeImage);
+            this.panelImage.Controls.Add(this.PDFReader);
             this.panelImage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelImage.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.panelImage.Location = new System.Drawing.Point(0, 0);
@@ -1444,16 +1437,6 @@
             this.panelImage.Name = "panelImage";
             this.panelImage.Size = new System.Drawing.Size(513, 531);
             this.panelImage.TabIndex = 0;
-            // 
-            // PDFReader
-            // 
-            this.PDFReader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PDFReader.Enabled = true;
-            this.PDFReader.Location = new System.Drawing.Point(0, 0);
-            this.PDFReader.Name = "PDFReader";
-            this.PDFReader.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("PDFReader.OcxState")));
-            this.PDFReader.Size = new System.Drawing.Size(509, 527);
-            this.PDFReader.TabIndex = 1;
             // 
             // pbeImage
             // 
@@ -1469,44 +1452,61 @@
             this.pbeImage.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PbeImage_MouseMove);
             this.pbeImage.MouseUp += new System.Windows.Forms.MouseEventHandler(this.PbeImage_MouseUp);
             // 
+            // PDFReader
+            // 
+            this.PDFReader.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.PDFReader.Enabled = true;
+            this.PDFReader.Location = new System.Drawing.Point(0, 0);
+            this.PDFReader.Name = "PDFReader";
+            this.PDFReader.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("PDFReader.OcxState")));
+            this.PDFReader.Size = new System.Drawing.Size(509, 527);
+            this.PDFReader.TabIndex = 1;
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsProgress,
-            this.tsStatusPrimary,
-            this.tsStatusSecondary,
+            this.tsProgress1,
+            this.tsStatus1,
+            this.tsProgress2,
+            this.tsStatus2,
             this.toolStripStatusLabel1,
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel3});
             this.statusStrip1.Location = new System.Drawing.Point(7, 563);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 19, 0);
+            this.statusStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.statusStrip1.Size = new System.Drawing.Size(1090, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // tsProgress
+            // tsProgress1
             // 
-            this.tsProgress.Name = "tsProgress";
-            this.tsProgress.Size = new System.Drawing.Size(100, 16);
-            this.tsProgress.ToolTipText = "Shows progress if any";
+            this.tsProgress1.Name = "tsProgress1";
+            this.tsProgress1.Size = new System.Drawing.Size(100, 16);
+            this.tsProgress1.ToolTipText = "Shows progress if any";
             // 
-            // tsStatusPrimary
+            // tsStatus1
             // 
-            this.tsStatusPrimary.AutoSize = false;
-            this.tsStatusPrimary.Name = "tsStatusPrimary";
-            this.tsStatusPrimary.Size = new System.Drawing.Size(547, 17);
-            this.tsStatusPrimary.Spring = true;
-            this.tsStatusPrimary.Text = "Ready";
-            this.tsStatusPrimary.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.tsStatusPrimary.ToolTipText = "Current Status";
+            this.tsStatus1.AutoSize = false;
+            this.tsStatus1.Name = "tsStatus1";
+            this.tsStatus1.Size = new System.Drawing.Size(395, 17);
+            this.tsStatus1.Spring = true;
+            this.tsStatus1.Text = "Ready";
+            this.tsStatus1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.tsStatus1.ToolTipText = "Current Status";
             // 
-            // tsStatusSecondary
+            // tsProgress2
             // 
-            this.tsStatusSecondary.AutoSize = false;
-            this.tsStatusSecondary.Name = "tsStatusSecondary";
-            this.tsStatusSecondary.Size = new System.Drawing.Size(200, 17);
-            this.tsStatusSecondary.Text = "Secondary status";
+            this.tsProgress2.Name = "tsProgress2";
+            this.tsProgress2.Size = new System.Drawing.Size(100, 16);
+            // 
+            // tsStatus2
+            // 
+            this.tsStatus2.AutoSize = false;
+            this.tsStatus2.Name = "tsStatus2";
+            this.tsStatus2.Size = new System.Drawing.Size(250, 17);
+            this.tsStatus2.Text = "Secondary status";
             // 
             // toolStripStatusLabel1
             // 
@@ -1572,7 +1572,6 @@
             this.scTitle.ResumeLayout(false);
             this.panelTitleTitles.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.panelTitleFields.ResumeLayout(false);
@@ -1582,7 +1581,6 @@
             this.groupBox4.PerformLayout();
             this.tpKeywords.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
             this.tpAbstract.ResumeLayout(false);
             this.tpReference.ResumeLayout(false);
             this.panelRefBottom.ResumeLayout(false);
@@ -1598,8 +1596,8 @@
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.panelImage.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.PDFReader)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbeImage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PDFReader)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.panelMain.ResumeLayout(false);
@@ -1654,7 +1652,7 @@
         private System.Windows.Forms.ToolStripButton tsbSpellCheck;
         private System.Windows.Forms.ToolStripButton tsbSwitchPage;
         private System.Windows.Forms.ToolStripButton tsbArrangeKW;
-        private System.Windows.Forms.ToolStripButton toolStripButton11;
+        private System.Windows.Forms.ToolStripButton tsbInsertSymbol;
         private System.Windows.Forms.ToolStripButton toolStripButton12;
         private System.Windows.Forms.ToolStripButton toolStripButton13;
         private System.Windows.Forms.ToolStripButton toolStripButton14;
@@ -1665,7 +1663,6 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox txtTitleFTitle;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.TextBox txtTitleTitle;
         private System.Windows.Forms.ToolStripButton toolStripButton16;
         private System.Windows.Forms.ToolStripButton tsbUndo;
         private System.Windows.Forms.GroupBox groupBox4;
@@ -1678,16 +1675,14 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txtTitleMAbs;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox txtTitleILang;
         private System.Windows.Forms.ComboBox cmbTitleIDType1;
         private System.Windows.Forms.TextBox txtTitleID4;
         private System.Windows.Forms.TextBox txtTitleID3;
         private System.Windows.Forms.TextBox txtTitleID2;
         private System.Windows.Forms.TextBox txtTitleID1;
-        private System.Windows.Forms.ToolStripProgressBar tsProgress;
-        private System.Windows.Forms.ToolStripStatusLabel tsStatusPrimary;
+        private System.Windows.Forms.ToolStripProgressBar tsProgress1;
+        private System.Windows.Forms.ToolStripStatusLabel tsStatus1;
         private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.TextBox txtKeywords;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Panel panelRefTop;
         private System.Windows.Forms.CheckBox checkBox1;
@@ -1733,12 +1728,16 @@
         private bambit.forms.controls.PictureBoxExtended pbeImage;
         private System.Windows.Forms.ToolStripMenuItem contentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logsToolStripMenuItem;
-        private System.Windows.Forms.RichTextBox rtbAbstract;
         private System.Windows.Forms.ComboBox cmbTitleIDType4;
         private System.Windows.Forms.ComboBox cmbTitleIDType3;
         private System.Windows.Forms.ComboBox cmbTitleIDType2;
-        private System.Windows.Forms.ToolStripStatusLabel tsStatusSecondary;
+        private System.Windows.Forms.ToolStripStatusLabel tsStatus2;
         private AxAcroPDFLib.AxAcroPDF PDFReader;
+        private System.Windows.Forms.ToolStripProgressBar tsProgress2;
+        private System.Windows.Forms.ComboBox cmbTitleLang;
+        private System.Windows.Forms.RichTextBox rtbTitleTitle;
+        private System.Windows.Forms.RichTextBox rtbKeywords;
+        private System.Windows.Forms.RichTextBox rtbAbstract;
         //private System.Windows.Forms.ToolStripStatusLabel tsslexam;
     }
 }

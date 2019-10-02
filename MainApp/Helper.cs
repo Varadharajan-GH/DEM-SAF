@@ -6,7 +6,7 @@ namespace MainApp
 {
     public class Helper
     {
-        public string GetFolder(string dirPath)
+        public static string GetFolder(string dirPath)
         {
             string folder = "";
 
@@ -33,20 +33,33 @@ namespace MainApp
             return folder;
         }
         #region TimeStamp
-        public string GetDateTimeStamp()
+        public static string GetDateTimeStamp()
         {
             return DateTime.Now.ToString("yyyyMMdd-HHmmss-fff");
         }
-        public string GetTimeStamp()
+        public static string GetTimeStamp()
         {
             return DateTime.Now.ToString("HHmmssfff");
         }
-        public void WriteLog(string log)
+        public static void WriteLog(string log)
         {
             Paths paths = new Paths();
             File.WriteAllText($"{paths.Folders.Log_Dir}\\SAF_{GetDateTimeStamp()}.log", log);
         }
         #endregion TimeStamp
+        public static string GetShortText(string text, int length)
+        {
+            if(text.Length>= length)
+            { 
+                return text.Substring(0, length);
+            }
+            else
+            {
+                return text;
+            }
+        }
+
+
     }
 
 

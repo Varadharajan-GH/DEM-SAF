@@ -11,6 +11,8 @@ namespace MainApp
         private string Namefield;
         private string FolderNamefield;
         private string ParentDirectoryfield;
+        private string  SourceAccessionDirfield;
+        private string CurrentAccessionDirfield;
         private string CurrentDirectoryfield;
         private List<string> Itemsfield;
         private List<string> UnprocessedItemsfield;
@@ -18,6 +20,7 @@ namespace MainApp
         private string CurrentItemfield;
         private bool IsPriorityfield;
         private bool IsAllCompletedfield;
+        private string LockIDfield;
 
         public ACCESSION()
         {
@@ -35,11 +38,22 @@ namespace MainApp
             IsAllCompletedfield = false;
         }
 
-        public string Name { get => Namefield; set => Namefield = value; }
+        public string Name { 
+            get => Namefield;
+            set
+            {
+                Namefield = value;
+                if (!string.IsNullOrWhiteSpace(ParentDirectoryfield))
+                {
+                    SourceAccessionDir = System.IO.Path.Combine(ParentDirectoryfield, Namefield);
+                }
+            }
+        }
         public string ParentDirectory
         {
             get => ParentDirectoryfield;
-            set {
+            set 
+            {
                 ParentDirectoryfield = value;
                 Paths paths = new Paths();
                 if (value.Contains(paths.Folders.Priority_Dir))
@@ -50,6 +64,10 @@ namespace MainApp
                 {
                     IsPriorityfield = false;
                 }
+                if (!string.IsNullOrWhiteSpace(Namefield))
+                {
+                    SourceAccessionDir = System.IO.Path.Combine(ParentDirectoryfield,Namefield);
+                }
             }
         }
         public List<string> Items { get => Itemsfield; set => Itemsfield = value; }
@@ -59,12 +77,22 @@ namespace MainApp
         public bool IsPriority { get => IsPriorityfield; set => IsPriorityfield = value; }
         public bool IsAllCompleted { get => IsAllCompletedfield; set => IsAllCompletedfield = value; }
         public string CurrentDirectory { get => CurrentDirectoryfield; set => CurrentDirectoryfield = value; }
-        public string FolderName { get => FolderNamefield; set => FolderNamefield = value; }
+        public string FolderName { get => FolderNamefield; set { FolderNamefield = value; Namefield = value.Split('.').FirstOrDefault(); } }
+        public string SourceAccessionDir { get => SourceAccessionDirfield; set => SourceAccessionDirfield = value; }
+        public string CurrentAccessionDir { get => CurrentAccessionDirfield; set => CurrentAccessionDirfield = value; }
+        public string LockID { get => LockIDfield; set => LockIDfield = value; }
 
-        internal string FullPath()
+        internal string FullSourcePath()
         {
-            if (FolderName == "") throw new Exception();
-            return ParentDirectory + System.IO.Path.DirectorySeparatorChar + FolderName;
+            if (!string.IsNullOrWhiteSpace( FolderName))
+                return System.IO.Path.Combine( ParentDirectory,FolderName);
+            return "";
+        }
+        internal string FullCurrentPath()
+        {
+            if (!string.IsNullOrWhiteSpace(FolderName))
+                return System.IO.Path.Combine(CurrentDirectory,FolderName);
+            return "";
         }
     }
 }
