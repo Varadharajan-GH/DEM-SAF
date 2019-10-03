@@ -37,7 +37,7 @@ namespace MainApp
         //private readonly string currentAccession;
         private string wordToCheck;
         private string oldText;
-        private string currentImage;
+        //private string currentImage;
         private RectangleBox rBox = new RectangleBox();
         private readonly Paths paths = new Paths();
         SerializeDeserialize<ISSUE> serializeIssue;
@@ -49,6 +49,7 @@ namespace MainApp
         public string UserName;
         private Dictionary<int, List<Word>> ResultText;
         private readonly string LockID;
+        ItemInfo currentItem;
 
         #endregion Declaration
 
@@ -163,23 +164,24 @@ namespace MainApp
             accessionInfo.CurrentName = accessionInfo.SourceName;
             accessionInfo.FullCurrentParentPath = Path.Combine(paths.Folders.Current_Dir, LockID);
 
-            accessionInfo.UnprocessedItems = new Queue<string>();
+            accessionInfo.UnprocessedItems = new Queue<ItemInfo>();
             if (itemsArray.Length <= 10)
             {
-                foreach (string item in itemsArray)
-                {
-                    try
-                    {
-                        string destPath = Path.Combine(Directory.CreateDirectory(accessionInfo.FullCurrentPath).FullName, Helper.GetFolder(item));
-                        Directory.Move(item, destPath);
-                        accessionInfo.UnprocessedItems.Enqueue(Helper.GetFolder(destPath));
-                    }
-                    catch (Exception e)
-                    {
-                        AddLog("Unable to move " + item);
-                        AddLog(e.Message);
-                    }
-                }
+                MoveNItems(itemsArray, itemsArray.Length);
+                //foreach (string item in itemsArray)
+                //{
+                //    try
+                //    {
+                //        string destPath = Path.Combine(Directory.CreateDirectory(accessionInfo.FullCurrentPath).FullName, Helper.GetFolder(item));
+                //        Directory.Move(item, destPath);
+                //        accessionInfo.UnprocessedItems.Enqueue(Helper.GetFolder(destPath));
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        AddLog("Unable to move " + item);
+                //        AddLog(e.Message);
+                //    }
+                //}
             }
             else if (itemsArray.Length <= 20)
             {
@@ -202,7 +204,7 @@ namespace MainApp
             //ProcessAccession(currentDir + Path.DirectorySeparatorChar + currentAccession);    
 
             AddLog("ProcessAccession");
-            //ProcessAccession();
+            ProcessAccession();
 
             //bw_OCR_AllPages.Dispose();
         }
@@ -213,17 +215,18 @@ namespace MainApp
             foreach (string item in itemsArray)
             {
                 if (i >= n) break;
-                else
+               
                     try
                     {
-                        Directory.Move(itemsArray[i],
-                                   Path.Combine(accessionInfo.FullCurrentPath, Helper.GetFolder(itemsArray[i])));
-                        accessionInfo.UnprocessedItems.Enqueue(Helper.GetFolder(itemsArray[i]));
+                        string destPath = Path.Combine(Directory.CreateDirectory( accessionInfo.FullCurrentPath).FullName, Helper.GetFolder(itemsArray[i]));
+                        Directory.Move(itemsArray[i], destPath);
+                        accessionInfo.UnprocessedItems.Enqueue(new ItemInfo(destPath));
                         i++;
                     }
-                    catch
+                    catch(Exception e)
                     {
                         AddLog("Unable to move " + itemsArray[i]);
+                        AddLog(e.Message);
                     }
             }
             AddLog(i + " items moved out of " + itemsArray.Length + " items.");
@@ -275,111 +278,147 @@ namespace MainApp
 
         private void ProcessAccession()
         {
-            AddLog("Processing Accession " + objAccession.Name);
+            AddLog("Processing Accession " + accessionInfo.SourceName);
             int num = 0;
             //Helper helper = new Helper();
 
-            if (objAccession.FolderName.Contains("."))
+            //if (objAccession.FolderName.Contains("."))
+            //{
+            //    if (!UserName.Contains(objAccession.FolderName.Split('.').LastOrDefault()))
+            //    {
+            //        AddLog($"The file {objAccession.FolderName.Split('.').FirstOrDefault()} locked by another user");
+            //        return;
+            //    }
+            //    else
+            //    {
+            //        if (Directory.Exists(paths.Folders.Current_Dir + "\\" + objAccession.Name))
+            //        {
+            //            AddLog($"{paths.Folders.Current_Dir + "\\" + objAccession.Name} already exist and will be renamed");
+            //            Directory.Move(paths.Folders.Current_Dir + "\\" + objAccession.Name,
+            //                paths.Folders.Current_Dir + "\\" + objAccession.Name + "." + Helper.GetTimeStamp());
+            //        }
+            //        try
+            //        {
+            //            Directory.Move(objAccession.FullSourcePath(), paths.Folders.Current_Dir + "\\" + objAccession.Name);
+            //            objAccession.FolderName = objAccession.Name;
+            //        }
+            //        catch (Exception)
+            //        {
+            //            AddLog("Could move to Current directory");
+            //        }
+            //        objAccession.CurrentDirectory = paths.Folders.Current_Dir;
+            //    }
+            //}
+            //else
+            //{
+            //    AddLog($"The file {objAccession.FolderName.Split('.').FirstOrDefault()} not locked");
+            //    return;
+            //}
+            //foreach (string dir in Directory.GetDirectories(objAccession.CurrentDirectory + "\\" + objAccession.Name, objAccession.Name + "*"))
+            
+            foreach(ItemInfo item in accessionInfo.UnprocessedItems)
             {
-                if (!UserName.Contains(objAccession.FolderName.Split('.').LastOrDefault()))
-                {
-                    AddLog($"The file {objAccession.FolderName.Split('.').FirstOrDefault()} locked by another user");
-                    return;
-                }
-                else
-                {
-                    if (Directory.Exists(paths.Folders.Current_Dir + "\\" + objAccession.Name))
-                    {
-                        AddLog($"{paths.Folders.Current_Dir + "\\" + objAccession.Name} already exist and will be renamed");
-                        Directory.Move(paths.Folders.Current_Dir + "\\" + objAccession.Name,
-                            paths.Folders.Current_Dir + "\\" + objAccession.Name + "." + Helper.GetTimeStamp());
-                    }
-                    try
-                    {
-                        Directory.Move(objAccession.FullSourcePath(), paths.Folders.Current_Dir + "\\" + objAccession.Name);
-                        objAccession.FolderName = objAccession.Name;
-                    }
-                    catch (Exception)
-                    {
-                        AddLog("Could move to Current directory");
-                    }
-                    objAccession.CurrentDirectory = paths.Folders.Current_Dir;
-                }
-            }
-            else
-            {
-                AddLog($"The file {objAccession.FolderName.Split('.').FirstOrDefault()} not locked");
-                return;
-            }
-            foreach (string dir in Directory.GetDirectories(objAccession.CurrentDirectory + "\\" + objAccession.Name, objAccession.Name + "*"))
-            {
-                string itemName = Helper.GetFolder(dir);
 
-                objAccession.Items.Add(itemName);
-                objAccession.UnprocessedItems.Add(itemName);
+                accessionInfo.CurrentItem = item.Name;                
 
-                string xmlFile = dir + "\\" + itemName + ".XML";
+                item.FullParentPath = accessionInfo.FullCurrentPath;
+
+                AddLog($"Processing item {item.Name}");
+
+                //string xmlFile = item.XMLPath; // Path.Combine(item, accessionInfo.CurrentItem + ".XML");
 
                 XmlDocument xmlDoc = new XmlDocument();
 
                 try
                 {
-                    AddLog("Loading xml " + xmlFile);
-                    xmlDoc.Load(xmlFile);
+                    AddLog("Loading xml " + item.XMLPath);
+                    xmlDoc.Load(item.XMLPath);
                 }
                 catch (Exception e)
                 {
                     AddLog(e.Message);
+                    continue;
                 }
 
                 num++;
-                string Accession = xmlDoc.SelectSingleNode("//ID_ACCESSION").InnerText;
-                string Item = xmlDoc.SelectSingleNode("//ITEM").Attributes["ITEMNO"].Value;
-                string PG = itemName.Substring(itemName.Length - 1, 1);
-                string DocType = xmlDoc.SelectSingleNode("//DT_DOCUMENTTYPE").InnerText;
-                string PageSpan = xmlDoc.SelectSingleNode("//PG_PAGESPAN").InnerText;
+                item.Accession = xmlDoc.SelectSingleNode("//ID_ACCESSION").InnerText;
+                item.ItemNumber = xmlDoc.SelectSingleNode("//ITEM").Attributes["ITEMNO"].Value;
+                item.PG = accessionInfo.CurrentItem.Substring(accessionInfo.CurrentItem.Length - 1, 1);
+                item.DocType = xmlDoc.SelectSingleNode("//DT_DOCUMENTTYPE").InnerText;
+                item.PageSpan = xmlDoc.SelectSingleNode("//PG_PAGESPAN").InnerText;
 
                 ListViewItem listViewItem = new ListViewItem(num.ToString());
                 listViewItem.SubItems.AddRange(new string[]
                 {
-                    Accession, Item,PG, DocType, "Waiting ...", PageSpan
+                    item.Accession, item.ItemNumber, item.PG, item.DocType, "Queued", item.PageSpan
                 });
                 _ = lvItems.Items.Add(listViewItem);
             }
             lvItems.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
             //ProcessXML(accnDir, objAccession.Items[0]);
-            if (objAccession.UnprocessedItems.Count != 0)
-            {
-                objAccession.CurrentItem = objAccession.UnprocessedItems.FirstOrDefault();
-                AddLog("Process item");
-                ProcessItem(objAccession);
-            }
-            AddLog($"Accession {objAccession.Name} completed");
+            //while (accessionInfo.UnprocessedItems.Count > 0)
+            //{                
+                ProcessItem();
+            //}
+            AddLog($"{accessionInfo.ProcessedItems.Count} Items of Accession {accessionInfo.SourceName} completed");
         }
 
-        private void ProcessItem(ACCESSION objAccn)
+        private void ProcessItem()
         {
-            AddLog("Processing item " + objAccn.CurrentItem);
+            if (accessionInfo.UnprocessedItems.Count == 0) return;
+            currentItem = accessionInfo.UnprocessedItems.Dequeue();
+            accessionInfo.CurrentItemPath = currentItem.FullPath;
+
+            AddLog("Processing item " + currentItem.Name);
 
             //bw_OCR_AllPages.RunWorkerAsync();
 
             serializeIssue = new SerializeDeserialize<ISSUE>();
 
-            string currentXML = $"{objAccn.CurrentDirectory}\\{objAccn.FolderName}\\{objAccn.CurrentItem}\\{objAccn.CurrentItem}.XML";
+            //string currentXML = Path.Combine(accessionInfo.CurrentItemPath, accessionInfo.CurrentItem + ".XML");
 
             XmlDocument xmldoc = new XmlDocument();
-
-            xmldoc.Load(currentXML);
+            
+            try
+            {
+                AddLog("Loading xml " + currentItem.XMLPath);
+                xmldoc.Load(currentItem.XMLPath);
+            }
+            catch (Exception e)
+            {
+                AddLog(e.Message);
+                accessionInfo.ErrorItems.Add(currentItem);
+                return;
+            }
 
             AddLog("Deserializing");
             deserializedIssues = serializeIssue.DeserializeData(xmldoc.OuterXml);
 
+            currentItem.ContentPageTifs = new List<string>();
+            currentItem.MainPageTifs = new List<string>();
+
+            foreach (string tif in Directory.GetFiles(currentItem.FullPath, $"{currentItem.Name}*.TIF"))
+            {
+                if (tif.Split(Path.PathSeparator).LastOrDefault().Contains("_CP"))
+                {
+                    currentItem.ContentPageTifs.Add(tif);
+                    AddLog($"{tif} added to ContentPageTifs");
+                }
+                else
+                {
+                    currentItem.MainPageTifs.Add(tif);
+                    AddLog($"{tif} added to MainPageTifs");
+                }
+            }
+
             LoadValues(deserializedIssues);
 
             //LoadPDF($"{objAccn.CurrentDirectory}\\{objAccn.FolderName}\\OCR_PDF", objAccn.CurrentItem);
-            LoadImage(11089);
-            lvItems.Items[objAccession.ProcessedItems.Count].SubItems[5].Text = "In Progress";
+            currentItem.CurrentImage = currentItem.MainPageTifs.First();
+            currentItem.IsContentPage = false;
+            LoadImage(currentItem.CurrentImage);
+            lvItems.Items[accessionInfo.ProcessedItems.Count].SubItems[5].Text = "In Progress";
             lvItems.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
             tcTagArea.SelectedTab = tpTitle;
@@ -780,7 +819,7 @@ namespace MainApp
 
         private void TsbRestore_Click(object sender, EventArgs e)
         {
-            pbeImage.ImageLocation = currentImage;
+            pbeImage.ImageLocation = currentItem.CurrentImage;
             //PDFReader.setZoomScroll(70, 0, 0);
         }
         private void TsbTopLeft_Click(object sender, EventArgs e)
@@ -960,32 +999,19 @@ namespace MainApp
 
         private void MiDone_Click(object sender, EventArgs e)
         {
-            SaveValues(objAccession.CurrentItem);
-            objAccession.ProcessedItems.Add(objAccession.CurrentItem);
-            objAccession.UnprocessedItems.Remove(objAccession.CurrentItem);
-            lvItems.Items[objAccession.ProcessedItems.Count - 1].SubItems[5].Text = "Completed";
+            SaveValues();
+            currentItem = null;
+            accessionInfo.ProcessedItems.Add(currentItem);
+            //objAccession.UnprocessedItems.Remove(objAccession.CurrentItem);
+            lvItems.Items[accessionInfo.ProcessedItems.Count - 1].SubItems[5].Text = "Completed";
             lvItems.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             ClearInputFields();
 
-            if (objAccession.UnprocessedItems.Count == 0)
+            if (accessionInfo.UnprocessedItems.Count > 0)
             {
-                try
-                {
-                    Directory.Move(objAccession.CurrentDirectory + "\\" + objAccession.Name + "\\OCR_PDF",
-                    Directory.CreateDirectory($"{paths.Folders.Completed_Dir}\\{objAccession.Name}").FullName + "\\OCR_PDF");
-                    Directory.Delete(objAccession.CurrentDirectory + "\\" + objAccession.Name);
-                }
-                catch (Exception ex)
-                {
-                    AddLog("Unable to move/delete OCR folder");
-                    AddLog(ex.Message);
-                }
-            }
-            else
-            {
-                objAccession.CurrentItem = objAccession.UnprocessedItems.FirstOrDefault();
-                ProcessItem(objAccession);
-            }
+                currentItem = accessionInfo.UnprocessedItems.Dequeue();
+                ProcessItem();
+            }           
         }
 
 
@@ -997,7 +1023,7 @@ namespace MainApp
         #region ToolStripButtonMethods
         private void ZoomTopLeft()
         {
-            Bitmap src = Image.FromFile(currentImage) as Bitmap;
+            Bitmap src = Image.FromFile(currentItem.CurrentImage) as Bitmap;
             Rectangle cropRect = new Rectangle(0, 0, (src.Width / 2) + 100, (src.Height / 2) + 100);
 
             Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
@@ -1014,7 +1040,7 @@ namespace MainApp
         }
         private void ZoomTopRight()
         {
-            Bitmap src = Image.FromFile(currentImage) as Bitmap;
+            Bitmap src = Image.FromFile(currentItem.CurrentImage) as Bitmap;
             Rectangle cropRect = new Rectangle((src.Width / 2) - 100, 0,
                                                 src.Width / 2 + 100, src.Height / 2 + 100);
 
@@ -1030,7 +1056,7 @@ namespace MainApp
         }
         private void ZoomBottomLeft()
         {
-            Bitmap src = Image.FromFile(currentImage) as Bitmap;
+            Bitmap src = Image.FromFile(currentItem.CurrentImage) as Bitmap;
             Rectangle cropRect = new Rectangle(0, (src.Height / 2) - 100,
                                                 src.Width / 2 + 100, src.Height / 2 + 100);
 
@@ -1046,7 +1072,7 @@ namespace MainApp
         }
         private void ZoomBottomRight()
         {
-            Bitmap src = Image.FromFile(currentImage) as Bitmap;
+            Bitmap src = Image.FromFile(currentItem.CurrentImage) as Bitmap;
             Rectangle cropRect = new Rectangle(src.Width / 2 - 100, src.Height / 2 - 100,
                                                 src.Width / 2 + 100, src.Height / 2 + 100);
 
@@ -1062,7 +1088,7 @@ namespace MainApp
         }
         private void ZoomTopHalf()
         {
-            Bitmap src = Image.FromFile(currentImage) as Bitmap;
+            Bitmap src = Image.FromFile(currentItem.CurrentImage) as Bitmap;
             Rectangle cropRect = new Rectangle(0, 0, src.Width, src.Height / 2 + 100);
 
             Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
@@ -1077,7 +1103,7 @@ namespace MainApp
         }
         private void ZoomBottomHalf()
         {
-            Bitmap src = Image.FromFile(currentImage) as Bitmap;
+            Bitmap src = Image.FromFile(currentItem.CurrentImage) as Bitmap;
             Rectangle cropRect = new Rectangle(0, src.Height / 2 - 100, src.Width, src.Height / 2 + 100);
 
             Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
@@ -1108,11 +1134,11 @@ namespace MainApp
         {
             _lastFocusedControl = (Control)sender;
         }
-        private void LoadImage(int seq)
+        private void LoadImage(string tifPath)
         {
-            AddLog($"Loading image {objAccession.CurrentItem}_{seq}.TIF");
-            currentImage = $"{objAccession.CurrentDirectory}\\{objAccession.Name}\\{objAccession.CurrentItem}\\{objAccession.CurrentItem}_{seq}.TIF";
-            pbeImage.ImageLocation = currentImage;
+            AddLog($"Loading image {tifPath}");
+            //currentImage = $"{objAccession.CurrentDirectory}\\{objAccession.Name}\\{objAccession.CurrentItem}\\{objAccession.CurrentItem}_{seq}.TIF";
+            pbeImage.ImageLocation = tifPath;
         }
         private void BwOSCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -1280,7 +1306,7 @@ namespace MainApp
 
             #endregion ABSTRACT
         }
-        private void SaveValues(string item)
+        private void SaveValues()
         {
             XmlDocument xmldocument = new XmlDocument();
 
@@ -1376,33 +1402,33 @@ namespace MainApp
 
             try
             {
-                string outDir = $"{Directory.CreateDirectory($"{ paths.Folders.Output_Dir}\\{objAccession.Name}\\{item}").FullName}";
+                string outDir = $"{Directory.CreateDirectory($"{ paths.Folders.Output_Dir}\\{accessionInfo.SourceName}\\{currentItem.Name}").FullName}";
                 xmldocument.LoadXml(System.Net.WebUtility.HtmlDecode(serializedIssues));
-                using (StreamWriter streamWriter = new StreamWriter($"{outDir}\\{item}.XML", false, Encoding.UTF8))
+                using (StreamWriter streamWriter = new StreamWriter($"{outDir}\\{currentItem.Name}.XML", false, Encoding.UTF8))
                 {
                     AddLog($"Saving {((FileStream)streamWriter.BaseStream).Name}");
                     xmldocument.Save(streamWriter);                     //For UTF-8 encoding
                 }
-                try
-                {
-                    MoveTiffs(objAccession.CurrentDirectory + "\\" + objAccession.Name + "\\" + item,
-                        $"{Directory.CreateDirectory($"{ paths.Folders.Output_Dir}\\{objAccession.Name}\\{item}").FullName}", item);
-                }
-                catch (Exception e)
-                {
-                    MessageBox.Show(e.Message);
-                }
+                //try
+                //{
+                //    MoveTiffs(objAccession.CurrentDirectory + "\\" + objAccession.Name + "\\" + item,
+                //        $"{Directory.CreateDirectory($"{ paths.Folders.Output_Dir}\\{objAccession.Name}\\{item}").FullName}", item);
+                //}
+                //catch (Exception e)
+                //{
+                //    MessageBox.Show(e.Message);
+                //}
 
                 try
                 {
-                    MoveCurrentItemDir(objAccession.CurrentDirectory + "\\" + objAccession.Name + "\\" + item,
-                                        Directory.CreateDirectory($"{paths.Folders.Completed_Dir}\\{objAccession.Name}").FullName + "\\" + item);
+                    MoveCurrentItemDir(accessionInfo.FullCurrentPath + "\\" + currentItem.Name,
+                                        Directory.CreateDirectory($"{paths.Folders.Completed_Dir}\\{accessionInfo.SourceName}").FullName + "\\" + currentItem.Name);
                 }
                 catch (Exception)
                 {
-                    AddLog($"Unable to move {objAccession.CurrentDirectory + "\\" + objAccession.Name + "\\" + item }");
+                    AddLog($"Unable to move {accessionInfo.FullCurrentPath + "\\" + currentItem.Name }");
                 }
-                MessageBox.Show("Saved");
+                MessageBox.Show("Item completed");
             }
             catch (Exception e)
             {
@@ -1548,7 +1574,7 @@ namespace MainApp
             cmbTitleIDType2.Text = "";
             cmbTitleIDType3.Text = "";
             cmbTitleIDType4.Text = "";
-            cmbTitleLang.Items.Clear();
+            //cmbTitleLang.Items.Clear();
             txtTitleMAbs.Clear();
             txtTitlePRange.Clear();
             txtTitleURL.Clear();
@@ -1557,7 +1583,7 @@ namespace MainApp
             rtbKeywords.Text = "";
             rtbAbstract.Text = "";
 
-            PDFReader.src = null;
+            //PDFReader.src = null;
 
         }
         private void SaveRtfAsXmlFile(String rtf, String Filename)

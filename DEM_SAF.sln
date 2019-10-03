@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoginForm", "LoginForm\Logi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DEM_SAF_Tests", "DEM_SAF_Tests\DEM_SAF_Tests.csproj", "{D058BEC0-3A1D-4FCA-9B5A-5A93E21A67D9}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "RichTextBoxEx", "RichTextBoxEx\RichTextBoxEx.vbproj", "{E49FA1FB-C46A-4193-86E4-0BE192CA268E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,18 +51,6 @@ Global
 		{D058BEC0-3A1D-4FCA-9B5A-5A93E21A67D9}.Release|x64.Build.0 = Release|x64
 		{D058BEC0-3A1D-4FCA-9B5A-5A93E21A67D9}.Release|x86.ActiveCfg = Release|x86
 		{D058BEC0-3A1D-4FCA-9B5A-5A93E21A67D9}.Release|x86.Build.0 = Release|x86
-		{E49FA1FB-C46A-4193-86E4-0BE192CA268E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E49FA1FB-C46A-4193-86E4-0BE192CA268E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E49FA1FB-C46A-4193-86E4-0BE192CA268E}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{E49FA1FB-C46A-4193-86E4-0BE192CA268E}.Debug|x64.Build.0 = Debug|Any CPU
-		{E49FA1FB-C46A-4193-86E4-0BE192CA268E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{E49FA1FB-C46A-4193-86E4-0BE192CA268E}.Debug|x86.Build.0 = Debug|Any CPU
-		{E49FA1FB-C46A-4193-86E4-0BE192CA268E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E49FA1FB-C46A-4193-86E4-0BE192CA268E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E49FA1FB-C46A-4193-86E4-0BE192CA268E}.Release|x64.ActiveCfg = Release|Any CPU
-		{E49FA1FB-C46A-4193-86E4-0BE192CA268E}.Release|x64.Build.0 = Release|Any CPU
-		{E49FA1FB-C46A-4193-86E4-0BE192CA268E}.Release|x86.ActiveCfg = Release|Any CPU
-		{E49FA1FB-C46A-4193-86E4-0BE192CA268E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

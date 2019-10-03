@@ -21,9 +21,18 @@ namespace MainApp
         private string CurrentParentNamefield;
         private string FullCurrentParentPathfield;
         private bool IsPriorityfield;
-        private Queue<string> UnprocessedItemsfield;
-        private List<string> ProcessedItemsfield;
+        private Queue<ItemInfo> UnprocessedItemsfield;
+        private List<ItemInfo> ProcessedItemsfield;
+        private List<ItemInfo> ErrorItemsfield;
+        private string CurrentItemfield;
+        private string CurrentItemPathfield;
 
+        public AccessionInfo()
+        {
+            UnprocessedItemsfield = new Queue<ItemInfo>();
+            ProcessedItemsfield = new List<ItemInfo>();
+            ErrorItemsfield = new List<ItemInfo>();
+        }
         public string SourceName 
         {
             get => SourceNamefield;
@@ -110,7 +119,11 @@ namespace MainApp
                 }
             }
         }
-        public Queue<string> UnprocessedItems { get => UnprocessedItemsfield; set => UnprocessedItemsfield = value; }
-        public List<string> ProcessedItems { get => ProcessedItemsfield; set => ProcessedItemsfield = value; }
+        public Queue<ItemInfo> UnprocessedItems { get => UnprocessedItemsfield; set => UnprocessedItemsfield = value; }
+        public List<ItemInfo> ProcessedItems { get => ProcessedItemsfield; set => ProcessedItemsfield = value; }
+        public string CurrentItem { get => CurrentItemfield; set => CurrentItemfield = value; }
+        public string CurrentItemPath { get => CurrentItemPathfield; set => CurrentItemPathfield = value; }
+        public List<ItemInfo> ErrorItems { get => ErrorItemsfield; set => ErrorItemsfield = value; }
+        //internal List<ItemInfo> ItemsList { get => ItemsListfield; set => ItemsListfield = value; }
     }
 }

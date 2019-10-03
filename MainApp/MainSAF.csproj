@@ -111,6 +111,7 @@
     <Compile Include="InsertSymbolForm.Designer.cs">
       <DependentUpon>InsertSymbolForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ItemInfo.cs" />
     <Compile Include="LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>
